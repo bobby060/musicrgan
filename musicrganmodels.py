@@ -26,7 +26,7 @@ def saveAudio(arr, path):
     tf.io.write_file(path, saved, name=None)
 
 
- def train_sequence_generator(lookback = 25, bs = 200):
+def train_sequence_generator(lookback = 25, bs = 200):
     data_location = "../data/train"
     data_array = np.zeros((bs,lookback))
     label_array = np.zeros((bs, 1))
