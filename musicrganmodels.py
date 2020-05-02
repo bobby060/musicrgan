@@ -17,8 +17,8 @@ import IPython.display as ipd
 from pydub import AudioSegment
 from keras.callbacks import LambdaCallback, ModelCheckpoint, EarlyStopping, History
 
-from keras.layers import Dense, LSTM, LeakyReLU
-from keras.models import Sequential, load_model, Conv1D, MaxPooling1D, Dropout
+from keras.layers import Dense, LSTM, LeakyReLU, Conv1D, MaxPooling1D, Dropout
+from keras.models import Sequential, load_model
 
 
 def saveAudio(arr, path):
@@ -149,6 +149,8 @@ def regression_model21():
 	regression_model2.compile(optimizer='adam', loss='mean_squared_error', metrics=[tf.keras.metrics.MeanSquaredError()])
 	regression_model2.summary()
 	return regression_model2
+print(tf.config.experimental.list_physical_devices('GPU'))
+
 
 lb = 2000
 batchsize = 150
