@@ -125,7 +125,7 @@ def regression_model1():
 	regression_model
 
 
-def regression_model21()
+def regression_model21():
 
 	regression_model2 = Sequential()
 	regression_model2.add(Conv1D(32, 5, activation='linear', input_shape=(None, 1)))
