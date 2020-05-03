@@ -7,6 +7,7 @@ from keras.models import load_model
 Usage: python make_music <model_path> <input_window> <bitrate> <num songs> <savepath> <train_
 
 """
+argv = sys.argv
 bitrate = int(argv[3])
 model_path = argv[1]
 num_songs = int(argv[4])
@@ -57,12 +58,15 @@ def song_generator(lookback,model, starter,len = 20000):
     
 model = load_model()
 
-for i in range(num_songs-1):
-	start_sample = get_start_sample()
-	newsong = song_generator(input_window, model, start_sample)
-	export_path = savepath+"/sample_generated_" + str(sample_counter)+".wav"
-	saveAudio(newsong.reshape(20000,1)*30000, export_path)
-	sample_counter+=1
+strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
+
+with strategy.scope():
+	for i in range(num_songs-1):
+		start_sample = get_start_sample()
+		newsong = song_generator(input_window, model, start_sample)
+		export_path = savepath+"/sample_generated_" + str(sample_counter)+".wav"
+		saveAudio(newsong.reshape(20000,1)*30000, export_path)
+		sample_counter+=1
 
 
 
