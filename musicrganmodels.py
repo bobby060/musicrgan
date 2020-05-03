@@ -124,7 +124,6 @@ with strategy.scope():
 
 	regression_model.compile(optimizer='adam', loss='mean_squared_error')
 	regression_model.summary()
-	regression_model
 
 
 	regression_model2 = Sequential()
@@ -158,7 +157,7 @@ with strategy.scope():
 	test_gen = test_sequence_generator(lookback = lb, bs = batchsize)
 
 
-	history = regression_model1.fit_generator(train_gen, 
+	history = regression_model.fit_generator(train_gen, 
 	                                         steps_per_epoch = 100,
 	                                         epochs = 5,
 	                                         validation_data=test_gen,
@@ -169,11 +168,11 @@ with strategy.scope():
 	# with open('/regression2history', 'wb') as file_pi:
 	#         pickle.dump(history.history, file_pi)
 
-	regression_model2.save('models/regression_model3.hd5')
+	regression_model.save('models/regression_model3.hd5')
 	        
 	gendata, res = next(test_gen)
 
-	newsong = song_generator(200, regression_model2, gendata[20])
+	newsong = song_generator(200, regression_model, gendata[20])
 	saveAudio(newsong.reshape(20000,1)*30000, 'results/regressionmodel1output.wav')
 
 
