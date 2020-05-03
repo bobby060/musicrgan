@@ -56,7 +56,7 @@ def song_generator(lookback,model, starter,len = 20000):
     output = output.reshape(1,len)
     return newsong[lookback:]
     
-model = load_model()
+model = load_model(model_path)
 
 strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
 
