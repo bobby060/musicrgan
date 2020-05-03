@@ -160,7 +160,7 @@ with strategy.scope():
 
 	history = regression_model2.fit_generator(train_gen, 
 	                                         steps_per_epoch = 100,
-	                                         epochs = 100,
+	                                         epochs = 40,
 	                                         validation_data=test_gen,
 	                                         validation_steps = 5,
 	                                         callbacks = cb_list)
