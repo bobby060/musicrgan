@@ -243,7 +243,7 @@ with strategy.scope():
 
 	regression_model2.save('models/regression_model4.hd5')
 	    
-    if return_song:    
+    if return_song:
     	gendata, res = next(test_gen)
 
     	newsong = song_generator(100, regression_model2, gendata[20])
