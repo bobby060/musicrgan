@@ -182,71 +182,71 @@ cb_list = [mc_cp]
 strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
 num_gpus = strategy.num_replicas_in_sync
 with strategy.scope():
-	regression_model = Sequential()
-	regression_model.add(LSTM(100, activation='linear', input_shape=(None, 1)))
-	regression_model.add(LeakyReLU())
-	regression_model.add(Dense(50, activation='linear'))
-	regression_model.add(LeakyReLU())
-	regression_model.add(Dense(25, activation='linear'))
-	regression_model.add(LeakyReLU())
-	regression_model.add(Dense(12, activation='linear'))
-	regression_model.add(LeakyReLU())
-	regression_model.add(Dense(units=1, activation='linear'))
-	regression_model.add(LeakyReLU())
+    regression_model = Sequential()
+    regression_model.add(LSTM(100, activation='linear', input_shape=(None, 1)))
+    regression_model.add(LeakyReLU())
+    regression_model.add(Dense(50, activation='linear'))
+    regression_model.add(LeakyReLU())
+    regression_model.add(Dense(25, activation='linear'))
+    regression_model.add(LeakyReLU())
+    regression_model.add(Dense(12, activation='linear'))
+    regression_model.add(LeakyReLU())
+    regression_model.add(Dense(units=1, activation='linear'))
+    regression_model.add(LeakyReLU())
 
 
-	regression_model.compile(optimizer='adam', loss='mean_squared_error', metrics=[tf.keras.metrics.MeanSquaredError()])
-	regression_model.summary()
-	regression_model
+    regression_model.compile(optimizer='adam', loss='mean_squared_error', metrics=[tf.keras.metrics.MeanSquaredError()])
+    regression_model.summary()
+    regression_model
 
 
-	regression_model2 = Sequential()
-	regression_model2.add(Conv1D(32, 5, activation='linear', input_shape=(None, 1)))
-	regression_model2.add(LeakyReLU())
-	regression_model2.add(MaxPooling1D(3))
-	regression_model2.add(Conv1D(32, 5, activation='linear'))
-	regression_model2.add(LeakyReLU())
-	regression_model2.add(LSTM(500, activation='linear'))
-	regression_model2.add(LeakyReLU())
-	regression_model2.add(Dense(250, activation='linear'))
-	regression_model2.add(LeakyReLU())
-	regression_model2.add(Dense(25, activation='linear'))
-	regression_model2.add(LeakyReLU())
-	regression_model2.add(Dense(12, activation='linear'))
-	regression_model2.add(LeakyReLU())
-	regression_model2.add(Dense(units=1, activation='linear'))
-	regression_model2.add(LeakyReLU())
+    regression_model2 = Sequential()
+    regression_model2.add(Conv1D(32, 5, activation='linear', input_shape=(None, 1)))
+    regression_model2.add(LeakyReLU())
+    regression_model2.add(MaxPooling1D(3))
+    regression_model2.add(Conv1D(32, 5, activation='linear'))
+    regression_model2.add(LeakyReLU())
+    regression_model2.add(LSTM(500, activation='linear'))
+    regression_model2.add(LeakyReLU())
+    regression_model2.add(Dense(250, activation='linear'))
+    regression_model2.add(LeakyReLU())
+    regression_model2.add(Dense(25, activation='linear'))
+    regression_model2.add(LeakyReLU())
+    regression_model2.add(Dense(12, activation='linear'))
+    regression_model2.add(LeakyReLU())
+    regression_model2.add(Dense(units=1, activation='linear'))
+    regression_model2.add(LeakyReLU())
 
 
-	regression_model2.compile(optimizer='adam', loss='mean_squared_error', metrics=[tf.keras.metrics.MeanSquaredError()])
-	regression_model2.summary()
-	print(tf.config.experimental.list_physical_devices('GPU'))
+    regression_model2.compile(optimizer='adam', loss='mean_squared_error', metrics=[tf.keras.metrics.MeanSquaredError()])
+    regression_model2.summary()
+    print(tf.config.experimental.list_physical_devices('GPU'))
 
 
-	lb = 200
-	batchsize = 500
+    lb = 200
+    batchsize = 500
 
-	train_gen = train_sequence_generator(lookback = lb, bs = batchsize)
-	test_gen = test_sequence_generator(lookback = lb, bs = batchsize)
+    train_gen = train_sequence_generator(lookback = lb, bs = batchsize)
+    test_gen = test_sequence_generator(lookback = lb, bs = batchsize)
 
 
-	history = regression_model2.fit_generator(train_gen, 
-	                                         steps_per_epoch = int(sys.argv[2]),
-	                                         epochs = int(sys.argv[1]),
-	                                         validation_data=test_gen,
-	                                         validation_steps = 5,
-	                                         callbacks = cb_list)
+    history = regression_model2.fit_generator(train_gen, 
+                                             steps_per_epoch = int(sys.argv[2]),
+                                             epochs = int(sys.argv[1]),
+                                             validation_data=test_gen,
+                                             validation_steps = 5,
+                                             callbacks = cb_list)
 
-	# https://stackoverflow.com/questions/41061457/keras-how-to-save-the-training-history-attribute-of-the-history-object
-	# with open('/regression2history', 'wb') as file_pi:
-	#         pickle.dump(history.history, file_pi)
+    # https://stackoverflow.com/questions/41061457/keras-how-to-save-the-training-history-attribute-of-the-history-object
+    # with open('/regression2history', 'wb') as file_pi:
+    #         pickle.dump(history.history, file_pi)
 
-	regression_model2.save('models/regression_model4.hd5')
-	    
+    regression_model2.save('models/regression_model4.hd5')
+        
     if return_song:
-    	gendata, res = next(test_gen)
+        gendata, res = next(test_gen)
 
-    	newsong = song_generator(100, regression_model2, gendata[20])
-    	saveAudio(newsong.reshape(20000,1)*30000, 'results/regressionmodel4output.wav')
+        newsong = song_generator(100, regression_model2, gendata[20])
+        saveAudio(newsong.reshape(20000,1)*30000, 'results/regressionmodel4output.wav')
 
 
