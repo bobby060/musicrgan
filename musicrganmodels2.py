@@ -195,7 +195,7 @@ with strategy.scope():
     regression_model.add(LeakyReLU())
 
 
-    regression_model.compile(optimizer='adam', loss='mean_squared_error', metrics=[metrics=['accuracy']])
+    regression_model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
     regression_model.summary()
     regression_model
 
