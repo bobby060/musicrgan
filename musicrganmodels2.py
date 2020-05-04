@@ -42,7 +42,7 @@ if (sys.argv[3]=='y'):
 
 
 def saveAudio(arr, path):
-    saved = tf.audio.encode_wav(tf.cast(arr, float) ,22000)
+    saved = tf.audio.encode_wav(tf.cast(arr, float) ,10000)
     tf.io.write_file(path, saved, name=None)
 
 
@@ -59,7 +59,7 @@ def train_sequence_generator(lookback = 25, bs = 200):
               if filepath.endswith(".mp3"):
                     mp3_audio = AudioSegment.from_file(filepath, format="mp3")
                     # rudimentary downsample factor of 3
-                    audio_array = mp3_audio.get_array_of_samples()
+                    audio_array = mp3_audio.get_array_of_samples()[::4]
                     audio_array = np.array(audio_array)
                     audio_array = audio_array.astype('float32')
                     l = len(audio_array)
@@ -106,7 +106,7 @@ def test_sequence_generator(lookback = 25, bs = 200):
               if filepath.endswith(".mp3"):
                     mp3_audio = AudioSegment.from_file(filepath, format="mp3")
                     # rudimentary downsample factor of 3
-                    audio_array = mp3_audio.get_array_of_samples()
+                    audio_array = mp3_audio.get_array_of_samples()[::4]
                     audio_array = np.array(audio_array)
                     audio_array = audio_array.astype('float32')
                     l = len(audio_array)
@@ -220,7 +220,7 @@ with strategy.scope():
 
     regression_model2.compile(optimizer='adam', loss='mean_squared_error', metrics=[tf.keras.metrics.MeanSquaredError()])
     regression_model2.summary()
-    print(tf.config.experimental.list_physical_devices('GPU'))
+    # print(tf.config.experimental.list_physical_devices('GPU'))
 
 
     lb = 200
@@ -234,6 +234,7 @@ with strategy.scope():
                                              steps_per_epoch = int(sys.argv[2]),
                                              epochs = int(sys.argv[1]),
                                              validation_data=test_gen,
+
                                              validation_steps = int(sys.argv[1])/4,
                                              callbacks = cb_list)
 
@@ -241,13 +242,17 @@ with strategy.scope():
     # with open('/regression2history', 'wb') as file_pi:
     #         pickle.dump(history.history, file_pi)
 
-    regression_model2.save('models/regression_model4')
-    regression_model2.save_weights('./checkpoints/regresssion2checkpoint')
+    regression_model2.save('models/regression_model5')
+    # regression_model2.save_weights('./checkpoints/regresssion2checkpoint')
         
     if return_song:
         gendata, res = next(test_gen)
 
         newsong = song_generator(100, regression_model2, gendata[20])
-        saveAudio(newsong.reshape(20000,1)*30000, 'results/regressionmodel4output.wav')
+        saveAudio(newsong.reshape(20000,1)*30000, 'results/regressionmodel5_1.wav')
 
+        gendata, res = next(test_gen)
+
+        newsong = song_generator(100, regression_model2, gendata[20])
+        saveAudio(newsong.reshape(20000,1)*30000, 'results/regressionmodel5_1.wav')
 
