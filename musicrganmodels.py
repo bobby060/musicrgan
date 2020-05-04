@@ -145,7 +145,7 @@ with strategy.scope():
 	regression_model2.add(LeakyReLU())
 
 
-	regression_model2.compile(optimizer='adam', loss='mean_squared_error', metrics=[tf.keras.metrics.MeanSquaredError()])
+	regression_model2.compile(optimizer='adam', loss='mean_squared_error')
 	regression_model2.summary()
 	print(tf.config.experimental.list_physical_devices('GPU'))
 

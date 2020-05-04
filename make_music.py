@@ -34,7 +34,7 @@ def get_start_sample():
                     # rudimentary downsample factor of 3
                     audio_array = mp3_audio.get_array_of_samples()
                     audio_array = np.array(audio_array)
-                    audio_array = audio_array.astype('float32')
+                    audio_array = audio_array.astype('float32')/30000
                     audio_array = np.nan_to_num(audio_array, nan=0.0)
                     samplename = "sample"+str(sample_counter)+"seed.wav"
                     path = model_path+"/"+samplename

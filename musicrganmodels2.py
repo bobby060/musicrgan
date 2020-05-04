@@ -29,11 +29,16 @@ print ("running with ", len(sys.argv), " arguments...")
 """
 Usage: 
 
-musicrganmodels2 <epochs> <steps_per_epoch>
+musicrganmodels2 <epochs> <steps_per_epoch> <returnsong>
 
 https://www.tutorialspoint.com/python/python_command_line_arguments.htm
 
 """
+
+return_song = False
+
+if (sys.argv[3]=='y'):
+    return_song = True
 
 
 def saveAudio(arr, path):
@@ -218,8 +223,8 @@ with strategy.scope():
 	print(tf.config.experimental.list_physical_devices('GPU'))
 
 
-	lb = 2000
-	batchsize = 150
+	lb = 200
+	batchsize = 500
 
 	train_gen = train_sequence_generator(lookback = lb, bs = batchsize)
 	test_gen = test_sequence_generator(lookback = lb, bs = batchsize)
@@ -237,10 +242,11 @@ with strategy.scope():
 	#         pickle.dump(history.history, file_pi)
 
 	regression_model2.save('models/regression_model2.hd5')
-	        
-	gendata, res = next(test_gen)
+	    
+    if return_song:    
+    	gendata, res = next(test_gen)
 
-	newsong = song_generator(200, regression_model2, gendata[20])
-	saveAudio(newsong.reshape(20000,1)*30000, 'results/regressionmodel3output.wav')
+    	newsong = song_generator(100, regression_model2, gendata[20])
+    	saveAudio(newsong.reshape(20000,1)*30000, 'results/regressionmodel3output.wav')
 
 
