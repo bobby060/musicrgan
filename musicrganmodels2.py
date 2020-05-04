@@ -241,7 +241,8 @@ with strategy.scope():
     # with open('/regression2history', 'wb') as file_pi:
     #         pickle.dump(history.history, file_pi)
 
-    regression_model2.save('models/regression_model4.hd5')
+    regression_model2.save('models/regression_model4')
+    regression_model2.save_weights('./checkpoints/regresssion2checkpoint')
         
     if return_song:
         gendata, res = next(test_gen)
