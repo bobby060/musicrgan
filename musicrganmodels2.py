@@ -195,7 +195,7 @@ with strategy.scope():
     regression_model.add(LeakyReLU())
 
 
-    regression_model.compile(optimizer='adam', loss='mean_squared_error', metrics=[tf.keras.metrics.MeanSquaredError()])
+    regression_model.compile(optimizer='adam', loss='mean_squared_error', metrics=[metrics=['accuracy']])
     regression_model.summary()
     regression_model
 
@@ -218,7 +218,7 @@ with strategy.scope():
     regression_model2.add(LeakyReLU())
 
 
-    regression_model2.compile(optimizer='adam', loss='mean_squared_error', metrics=[tf.keras.metrics.MeanSquaredError()])
+    regression_model2.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
     regression_model2.summary()
     # print(tf.config.experimental.list_physical_devices('GPU'))
 
