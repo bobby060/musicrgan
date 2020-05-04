@@ -239,8 +239,8 @@ with strategy.scope():
                                              callbacks = cb_list)
 
     # https://stackoverflow.com/questions/41061457/keras-how-to-save-the-training-history-attribute-of-the-history-object
-    # with open('/regression2history', 'wb') as file_pi:
-    #         pickle.dump(history.history, file_pi)
+    with open('regressionhistory', 'wb') as file_pi:
+            pickle.dump(history.history, file_pi)
 
     regression_model2.save('models/regression_model5')
     # regression_model2.save_weights('./checkpoints/regresssion2checkpoint')

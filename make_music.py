@@ -1,9 +1,28 @@
-import sys
+from __future__ import absolute_import, division, print_function, unicode_literals, generators
+
+import os
+import pathlib
+import functools
+import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-from keras.models import load_model
-import os
+keras.__version__
+import pandas as pd
+import matplotlib.pyplot as plt
+from os import path
+from tensorflow.keras import layers
+import ffmpeg
+import IPython.display as ipd
 
+from pydub import AudioSegment
+from keras.callbacks import LambdaCallback, ModelCheckpoint, EarlyStopping, History
+
+from keras.layers import Dense, LSTM, LeakyReLU, Conv1D, MaxPooling1D, Dropout
+from keras.models import Sequential, load_model
+
+from sklearn.preprocessing import normalize, MinMaxScaler
+
+import sys
 
 """
 Usage: python make_music <model_path> <input_window> <bitrate> <num songs> <savepath> <train_
