@@ -234,7 +234,7 @@ with strategy.scope():
                                              steps_per_epoch = int(sys.argv[2]),
                                              epochs = int(sys.argv[1]),
                                              validation_data=test_gen,
-                                             validation_steps = 5,
+                                             validation_steps = int(sys.argv[1]/4,
                                              callbacks = cb_list)
 
     # https://stackoverflow.com/questions/41061457/keras-how-to-save-the-training-history-attribute-of-the-history-object

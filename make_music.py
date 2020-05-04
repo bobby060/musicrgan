@@ -1,6 +1,8 @@
 import sys
 import tensorflow as tf
+from tensorflow import keras
 from keras.models import load_model
+import os
 
 
 """
@@ -57,6 +59,7 @@ def song_generator(lookback,model, starter,len = 20000):
     return newsong[lookback:]
     
 model = load_model(model_path)
+model.compile(optimizer='adam', loss='mean_squared_error', metrics=[tf.keras.metrics.MeanSquaredError()])
 
 strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
 
