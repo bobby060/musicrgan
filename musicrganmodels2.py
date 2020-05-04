@@ -231,7 +231,7 @@ with strategy.scope():
 
 
 	history = regression_model2.fit_generator(train_gen, 
-	                                         steps_per_epoch = int(sys.argv[2],
+	                                         steps_per_epoch = int(sys.argv[2]),
 	                                         epochs = int(sys.argv[1]),
 	                                         validation_data=test_gen,
 	                                         validation_steps = 5,
@@ -241,12 +241,12 @@ with strategy.scope():
 	# with open('/regression2history', 'wb') as file_pi:
 	#         pickle.dump(history.history, file_pi)
 
-	regression_model2.save('models/regression_model2.hd5')
+	regression_model2.save('models/regression_model4.hd5')
 	    
     if return_song:    
     	gendata, res = next(test_gen)
 
     	newsong = song_generator(100, regression_model2, gendata[20])
-    	saveAudio(newsong.reshape(20000,1)*30000, 'results/regressionmodel3output.wav')
+    	saveAudio(newsong.reshape(20000,1)*30000, 'results/regressionmodel4output.wav')
 
 
