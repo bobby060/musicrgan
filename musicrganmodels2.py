@@ -165,7 +165,9 @@ fp = 'models/bestrnnmodel.h5'
 mc_cp = ModelCheckpoint(filepath = fp, save_best_only = True, verbose = 1)
     
 es_cb = EarlyStopping(monitor = 'val_loss', mode='min', verbose = 1, patience = 5, min_delta=0.0001, restore_best_weights=True)
-cb_list = [mc_cp]
+
+logger = keras.callbacks.callbacks.CSVLogger('last_model_logger', separator=',', append=True)
+cb_list = [mc_cp, logger]
 
 strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
 num_gpus = strategy.num_replicas_in_sync
@@ -235,12 +237,12 @@ with strategy.scope():
         
     if return_song:
         gendata, res = next(test_gen)
-
-        newsong = song_generator(100, regression_model2, gendata[20], 100)
-        saveAudio(newsong.reshape(20000,1)*30000, 'results/regressionmodel5_1.wav')
+        song_len = 2000
+        newsong = song_generator(100, regression_model2, gendata[20], song_len)
+        saveAudio(newsong.reshape(song_len,1), 'results/regressionmodel5_1.wav')
 
         gendata, res = next(test_gen)
 
         newsong = song_generator(100, regression_model2, gendata[20], 100)
-        saveAudio(newsong.reshape(20000,1)*30000, 'results/regressionmodel5_1.wav')
+        saveAudio(newsong.reshape(song_len,1), 'results/regressionmodel5_1.wav')
 
