@@ -107,8 +107,14 @@ def test_sequence_generator(lookback = 25, bs = 200):
                   filepath = subdir + os.sep + file
                   # Decodes audio
                   if filepath.endswith(".mp3"):
+
+                    try:
                         mp3_audio = AudioSegment.from_file(filepath, format="mp3")
+                    except:
+                        mp3_audio = None
+                        print("reading error ffmpeg")
                         # rudimentary downsample factor of 3
+                    if mp3_audio != None:
                         audio_array = mp3_audio.get_array_of_samples()[::4]
                         audio_array = np.array(audio_array)
                         audio_array = audio_array.astype('float32')
@@ -213,36 +219,62 @@ with strategy.scope():
     # print(tf.config.experimental.list_physical_devices('GPU'))
 
 
-    lb = 200
-    batchsize = 500
+    regression_model3 = Sequential()
+    regression_model3.add(Conv1D(32, 5, activation='linear', input_shape=(None, 1)))
+    regression_model3.add(LeakyReLU())
+    regression_model3.add(MaxPooling1D(3))
+    regression_model3.add(Conv1D(32, 5, activation='linear'))
+    regression_model3.add(LeakyReLU())
+    regression_model3.add(LSTM(500, activation='linear', return_sequences=True))
+    regression_model3.add(LeakyReLU())
+    regression_model3.add(LSTM(250, activation='linear'))
+    regression_model3.add(LeakyReLU())
+    regression_model3.add(Dense(250, activation='linear'))
+    regression_model3.add(LeakyReLU())
+    regression_model3.add(Dense(25, activation='linear'))
+    regression_model3.add(LeakyReLU())
+    regression_model3.add(Dense(12, activation='linear'))
+    regression_model3.add(LeakyReLU())
+    regression_model3.add(Dense(units=1, activation='linear'))
+    regression_model3.add(LeakyReLU())
+
+
+    regression_model3.compile(optimizer='adam', loss='mean_squared_error', metrics=['mean_squared_error'])
+    regression_model3.summary()
+
+
+
+
+    lb = 500
+    batchsize = 1000
 
     train_gen = train_sequence_generator(lookback = lb, bs = batchsize)
     test_gen = test_sequence_generator(lookback = lb, bs = batchsize)
 
 
-    history = regression_model2.fit_generator(train_gen, 
+    history = regression_model3.fit_generator(train_gen, 
                                              steps_per_epoch = int(sys.argv[2]),
                                              epochs = int(sys.argv[1]),
                                              validation_data=test_gen,
 
-                                             validation_steps = int(sys.argv[1])/4,
+                                             validation_steps = int(sys.argv[2])/4,
                                              callbacks = cb_list)
 
     # https://stackoverflow.com/questions/41061457/keras-how-to-save-the-training-history-attribute-of-the-history-object
     with open('regressionhistory', 'wb') as file_pi:
             pickle.dump(history.history, file_pi)
 
-    regression_model2.save('models/regression_model5')
+    regression_model3.save('models/regression_model6')
     # regression_model2.save_weights('./checkpoints/regresssion2checkpoint')
         
     if return_song:
         gendata, res = next(test_gen)
         song_len = 2000
         newsong = song_generator(100, regression_model2, gendata[20], song_len)
-        saveAudio(newsong.reshape(song_len,1), 'results/regressionmodel5_1.wav')
+        saveAudio(newsong.reshape(song_len,1), 'results/regressionmodel6_1.wav')
 
         gendata, res = next(test_gen)
 
         newsong = song_generator(100, regression_model2, gendata[20], 100)
-        saveAudio(newsong.reshape(song_len,1), 'results/regressionmodel5_1.wav')
+        saveAudio(newsong.reshape(song_len,1), 'results/regressionmodel6_1.wav')
 
