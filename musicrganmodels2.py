@@ -15,7 +15,7 @@ import ffmpeg
 import IPython.display as ipd
 
 from pydub import AudioSegment
-from keras.callbacks import LambdaCallback, ModelCheckpoint, EarlyStopping, History
+from keras.callbacks import LambdaCallback, ModelCheckpoint, EarlyStopping, History, CSVLogger
 
 from keras.layers import Dense, LSTM, LeakyReLU, Conv1D, MaxPooling1D, Dropout
 from keras.models import Sequential, load_model
@@ -166,7 +166,7 @@ mc_cp = ModelCheckpoint(filepath = fp, save_best_only = True, verbose = 1)
     
 es_cb = EarlyStopping(monitor = 'val_loss', mode='min', verbose = 1, patience = 5, min_delta=0.0001, restore_best_weights=True)
 
-logger = keras.callbacks.callbacks.CSVLogger('last_model_logger', separator=',', append=True)
+logger = CSVLogger('last_model_logger', separator=',', append=True)
 cb_list = [mc_cp, logger]
 
 strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
