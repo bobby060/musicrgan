@@ -141,12 +141,12 @@ def test_sequence_generator(lookback = 25, bs = 200):
                         print("nan found!")
 
                         
-def song_generator(lookback,model, starter,len = 20000):
-    newsong = np.zeros(len+lookback)
+def song_generator(lookback,model, starter,length = 20000):
+    newsong = np.zeros(length+lookback)
     for i in range(lookback):
         newsong[i] = starter[i]
     print("copied song...")
-    for i in range(len-lookback-1):
+    for i in range(length-lookback-1):
         newsong[lookback+i] = model.predict(newsong[lookback+i:i+2*lookback].reshape(1,lookback,1))
         if i%1000==0:
             print("Predicted " + str(i)+ " samples")
@@ -155,7 +155,7 @@ def song_generator(lookback,model, starter,len = 20000):
     scaler = MinMaxScaler(feature_range=[-30000,30000])
     scaler.fit(newsong)
     newsong = scaler.transform(newsong)
-    newsong = newsong.reshape(1,l)
+    newsong = newsong.reshape(l,l)
     return newsong[lookback:]
     
 
