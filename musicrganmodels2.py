@@ -254,7 +254,7 @@ with strategy.scope():
     test_gen = test_sequence_generator(lookback = lb, bs = batchsize)
 
 
-    history = regression_model3.fit_generator(train_gen, 
+    history = regression_model2.fit_generator(train_gen, 
                                              steps_per_epoch = int(sys.argv[2]),
                                              epochs = int(sys.argv[1]),
                                              validation_data=test_gen,
@@ -266,7 +266,7 @@ with strategy.scope():
     with open('regressionhistory', 'wb') as file_pi:
             pickle.dump(history.history, file_pi)
 
-    regression_model3.save('models/regression_model6')
+    regression_model2.save('models/regression_model6')
     # regression_model2.save_weights('./checkpoints/regresssion2checkpoint')
         
     if return_song:
