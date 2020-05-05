@@ -140,23 +140,6 @@ def test_sequence_generator(lookback = 25, bs = 200):
                     else:
                         print("nan found!")
 
-
-def make_reverse_transform():
-    song_loc = '../data/train/000/num.mp3'
-    mp3_audio = AudioSegment.from_file(song_loc, format="mp3")
-
-    mp3_audio = AudioSegment.from_file(filepath, format="mp3")
-                    # rudimentary downsample factor of 3
-    audio_array = mp
-3_audio.get_array_of_samples()
-    audio_array = np.array(audio_array)
-    audio_array = audio_array.astype('float32')
-    l = len(audio_array)
-    audio_array = audio_array.reshape((l,1))
-    # https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html
-    scaler = MinMaxScaler(feature_range=(-1,1))
-    scaler.fit(audio_array)
-    return scaler
                         
 def song_generator(lookback,model, starter,len = 20000):
     newsong = np.zeros(len+lookback)
