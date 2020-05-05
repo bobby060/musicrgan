@@ -247,7 +247,7 @@ with strategy.scope():
 
 
 
-    lb = 500
+    lb = 200
     batchsize = 1000
 
     train_gen = train_sequence_generator(lookback = lb, bs = batchsize)
