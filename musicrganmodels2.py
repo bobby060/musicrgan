@@ -147,7 +147,8 @@ def make_reverse_transform():
 
     mp3_audio = AudioSegment.from_file(filepath, format="mp3")
                     # rudimentary downsample factor of 3
-    audio_array = mp3_audio.get_array_of_samples()
+    audio_array = mp
+3_audio.get_array_of_samples()
     audio_array = np.array(audio_array)
     audio_array = audio_array.astype('float32')
     l = len(audio_array)
@@ -155,7 +156,6 @@ def make_reverse_transform():
     # https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html
     scaler = MinMaxScaler(feature_range=(-1,1))
     scaler.fit(audio_array)
-
     return scaler
                         
 def song_generator(lookback,model, starter,len = 20000):
@@ -167,10 +167,12 @@ def song_generator(lookback,model, starter,len = 20000):
         newsong[lookback+i] = model.predict(newsong[lookback+i:i+2*lookback].reshape(1,lookback,1))
         if i%1000==0:
             print("Predicted " + str(i)+ " samples")
-    scaler = make_reverse_transform()
-    output = newsong.reshape(len,1)
-    output = scaler.inverse_transform(output)
-    output = output.reshape(1,len)
+    l = len(newsong)
+    newsong = newsong.reshape((l,1))
+    scaler = MinMaxScaler(feature_range=[-30000,30000])
+    scaler.fit(newsong)
+    newsong = scaler.transform(newsong)
+    newsong = newsong.reshape(1,l)
     return newsong[lookback:]
     
 
@@ -249,11 +251,11 @@ with strategy.scope():
     if return_song:
         gendata, res = next(test_gen)
 
-        newsong = song_generator(100, regression_model2, gendata[20])
+        newsong = song_generator(100, regression_model2, gendata[20], 100)
         saveAudio(newsong.reshape(20000,1)*30000, 'results/regressionmodel5_1.wav')
 
         gendata, res = next(test_gen)
 
-        newsong = song_generator(100, regression_model2, gendata[20])
+        newsong = song_generator(100, regression_model2, gendata[20], 100)
         saveAudio(newsong.reshape(20000,1)*30000, 'results/regressionmodel5_1.wav')
 

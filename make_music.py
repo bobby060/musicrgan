@@ -25,7 +25,7 @@ from sklearn.preprocessing import normalize, MinMaxScaler
 import sys
 
 """
-Usage: python make_music <model_path> <input_window> <bitrate> <num songs> <savepath> <train_
+Usage: python make_music <model_path> <input_window> <bitrate> <num songs> <savepath> 
 
 """
 argv = sys.argv
@@ -83,7 +83,7 @@ model.compile(optimizer='adam', loss='mean_squared_error', metrics=[tf.keras.met
 strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
 
 with strategy.scope():
-	for i in range(num_songs-1):
+	for i in range(num_songs):
 		start_sample = get_start_sample()
 		newsong = song_generator(input_window, model, start_sample)
 		export_path = savepath+"/sample_generated_" + str(sample_counter)+".wav"
