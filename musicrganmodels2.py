@@ -108,13 +108,15 @@ def test_sequence_generator(lookback = 25, bs = 200):
                   # Decodes audio
                   if filepath.endswith(".mp3"):
 
+                    flag = False
                     try:
                         mp3_audio = AudioSegment.from_file(filepath, format="mp3")
+                        flag = True
                     except:
                         mp3_audio = None
                         print("reading error ffmpeg")
                         # rudimentary downsample factor of 3
-                    if mp3_audio != None:
+                    if flag==True:
                         audio_array = mp3_audio.get_array_of_samples()[::4]
                         audio_array = np.array(audio_array)
                         audio_array = audio_array.astype('float32')
