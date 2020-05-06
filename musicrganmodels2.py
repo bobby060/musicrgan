@@ -48,7 +48,7 @@ def saveAudio(arr, path):
 
 
 def train_sequence_generator(lookback = 25, bs = 200):
-    data_location = "../data/train"
+    data_location = "../data/train/001"
     data_array = np.zeros((bs,lookback))
     label_array = np.zeros((bs, 1))
     counter = 0
@@ -96,7 +96,7 @@ def train_sequence_generator(lookback = 25, bs = 200):
 
                         
 def test_sequence_generator(lookback = 25, bs = 200):
-    data_location = "../data/test"
+    data_location = "../data/test/101"
     data_array = np.zeros((bs,lookback))
     label_array = np.zeros((bs, 1))
     counter = 0
