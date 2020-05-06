@@ -280,3 +280,9 @@ with strategy.scope():
         newsong = song_generator(100, regression_model2, gendata[20], 100)
         saveAudio(newsong.reshape(song_len,1), 'results/regressionmodel6_1.wav')
 
+        """Traceback (most recent call last):
+  File "musicrganmodels2.py", line 276, in <module>
+    saveAudio(newsong.reshape(song_len,1), 'results/regressionmodel6_1.wav')
+ValueError: cannot reshape array of size 0 into shape (2000,1)
+"""
+
