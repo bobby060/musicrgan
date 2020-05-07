@@ -324,6 +324,7 @@ if i==1:
             output.append(seedSeqNew[0][seedSeqNew.shape[1]-1].copy())
         # newSeq contains the generated sequence.
         next_step = seedSeqNew[0][-1]
+        next_step = np.reshape(next_step, (1, next_step.shape[0]))
         newSeq = np.concatenate((seed_seq[0][:-9], next_step), axis=0)
         print('next step shape: ', newSeq.shape)
         # Reshaping the new sequence for concatenation.
