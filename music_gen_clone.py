@@ -175,9 +175,11 @@ def getSequences(path):
     return (chunks_X, chunks_Y)
 
 
-strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
-num_gpus = strategy.num_replicas_in_sync
-with strategy.scope():
+# strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
+# num_gpus = strategy.num_replicas_in_sync
+# with strategy.scope():
+i = 1
+if i==1:
     sample_frequency = 44100
     block_size = 44100
     trainpath = '/yoyoma_dataset/train'
