@@ -308,10 +308,9 @@ if i==1:
 
     # We take the first chunk of the training data itself for seed sequence.
     seed_seq = x_train_arr[2]
-    print(seed_seq.shape)
     # Reshaping the sequence to feed to the RNN.
     seed_seq = np.reshape(seed_seq, (1, seed_seq.shape[0], seed_seq.shape[1]))
-    print(seed_seq.shape)
+
     # Generated song sequence is stored in output.
     output = []
     for it in range(max_seq_len):
@@ -324,11 +323,13 @@ if i==1:
         else:
             output.append(seedSeqNew[0][seedSeqNew.shape[1]-1].copy())
         # newSeq contains the generated sequence.
-        newSeq = seedSeqNew[0][seedSeqNew.shape[1]-1]
+        next_step = seedSeqNew[0][-1]
+        newSeq = np.concatenate((seed_seq[0][:-9], next_step), axis=0)
+        print('next step shape: ', newSeq.shape)
         # Reshaping the new sequence for concatenation.
-        newSeq = np.reshape(newSeq, (1, 1, newSeq.shape[0]))
+        newSeq = np.reshape(newSeq, (1, newSeq.shape[0], newSeq.shape[1]))
         # Appending the new sequence to the old sequence.
-        seed_seq = np.concatenate((seed_seq, newSeq), axis=1)
+        seed_seq = newSeq
 
 
     # The path for the generated song
