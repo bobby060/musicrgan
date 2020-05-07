@@ -25,8 +25,9 @@ def read_wav_as_np(file):
 
 
 def saveAudio(arr, sample_rate, path):
+    arr = arr * 32867.0
     arr = np.reshape(arr, (arr.shape[0],1))
-    saved = tf.audio.encode_wav(tf.cast(arr, float) ,sample_rate)
+    saved = tf.audio.encode_wav(arr ,sample_rate)
     tf.io.write_file(path, saved, name=None)
     return
 
