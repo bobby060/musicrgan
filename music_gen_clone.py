@@ -210,9 +210,9 @@ if i==1:
         if file.endswith(".wav"):
             print('found wav')
             print(file)
-                x,y = getSequences(file)
-                x_train.append(x)
-                y_train.append(y)
+            x,y = getSequences(file)
+            x_train.append(x)
+            y_train.append(y)
 
 
     print(len(x_train), ' songs read')
