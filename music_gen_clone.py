@@ -182,8 +182,8 @@ i = 1
 if i==1:
     sample_frequency = 44100
     block_size = 44100
-    trainpath = 'yoyoma_dataset/train'
-    testpath = 'yoyoma_dataset/test'
+    trainpath = 'yoyoma_dataset/train/'
+    testpath = 'yoyoma_dataset/test/'
 
     max_seq_len = 10
 
@@ -200,7 +200,8 @@ if i==1:
         if file.endswith(".wav"):
             print('found wav')
             print(file)
-            x, y =getSequences(file)
+            path = trainpath+file
+            x, y =getSequences(path)
             x_train.append(x)
             y_train.append(y)
 
@@ -210,7 +211,8 @@ if i==1:
         if file.endswith(".wav"):
             print('found wav')
             print(file)
-            x,y = getSequences(file)
+            path = testpath + file
+            x,y = getSequences(path)
             x_train.append(x)
             y_train.append(y)
 
