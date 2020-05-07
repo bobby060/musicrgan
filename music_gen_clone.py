@@ -186,16 +186,18 @@ with strategy.scope():
     max_seq_len = 10
 
 
-    x_train = np.zeros((1, max_seq_len, block_size*2))
-    y_train = np.zeros((1, max_seq_len, block_size*2))
-    x_test = np.zeros((1, max_seq_len, block_size*2))
-    y_test = np.zeros((1, max_seq_len, block_size*2))
+    x_train = np.zeros((1000, max_seq_len, block_size*2))
+    y_train = np.zeros((1000, max_seq_len, block_size*2))
+    x_test = np.zeros((1000, max_seq_len, block_size*2))
+    y_test = np.zeros((1000, max_seq_len, block_size*2))
 
 
     train_flag = True
     for subdir, dirs, files in os.walk(trainpath):
         for file in files:
+            print(file)
             x, y =getSequences(file)
+            print(len(x))
             if train_flag:
                 x_train = x
                 y_train = y
@@ -228,7 +230,7 @@ with strategy.scope():
     # Sequential is a linear stack of layers
     model = Sequential()
     # This layer converts frequency space to hidden space
-    model.add(TimeDistributed(Dense(num_hidden_dimensions), input_dim=num_frequency_dimensions))
+    model.add(TimeDistributed(Dense(num_hidden_dimensions), input_shape=(num_frequency_dimensions, block_size*2)))
     # return_sequences=True implies return the entire output sequence & not just the last output
     model.add(LSTM(num_hidden_dimensions, return_sequences=True))
     # This layer converts hidden space back to frequency space
