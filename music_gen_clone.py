@@ -186,10 +186,10 @@ with strategy.scope():
     max_seq_len = 10
 
 
-    x_train = np.zeros(1, max_seq_len, block_size*2)
-    y_train = np.zeros(1, max_seq_len, block_size*2)
-    x_test = np.zeros(1, max_seq_len, block_size*2)
-    y_test = np.zeros(1, max_seq_len, block_size*2)
+    x_train = np.zeros((1, max_seq_len, block_size*2))
+    y_train = np.zeros((1, max_seq_len, block_size*2))
+    x_test = np.zeros((1, max_seq_len, block_size*2))
+    y_test = np.zeros((1, max_seq_len, block_size*2))
 
 
     train_flag = True
