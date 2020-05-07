@@ -274,7 +274,7 @@ if i==1:
     print('Input layer size: ',num_frequency_dimensions)
     print('Hidden layer size: ',num_hidden_dimensions)
     # Sequential is a linear stack of layers
-    """
+
     model = Sequential()
     # This layer converts frequency space to hidden space
     model.add(TimeDistributed(Dense(num_hidden_dimensions), input_shape=(num_frequency_dimensions, bs*2)))
@@ -293,14 +293,14 @@ if i==1:
     # Number of iterations before we save our model
     epochs_per_iter = 3
     # Number of training examples pushed to the GPU per batch.
-    batch_size = 20
+    batch_size = 5
     # Path to weights file
-    model_path = 'models/music_gen'
+    model_path = 'models/music_gen1.0.h5'
     cur_iter = 0
     while cur_iter < num_iters:
         print('Iteration: ' + str(cur_iter))
         # Iterate over the training data in batches
-        history = model.fit(x_train_arr, y_train_arr, batch_size=2, epochs=epochs_per_iter, validation_data=(x_test_arr, y_test_arr))
+        history = model.fit(x_train_arr, y_train_arr, batch_size=batch_size, epochs=epochs_per_iter, validation_data=(x_test_arr, y_test_arr))
         cur_iter += epochs_per_iter
     print('Training complete!')
     model.save(model_path)
@@ -335,4 +335,3 @@ if i==1:
     time_blocks = fft_blocks_to_time_blocks(output)
     song = convert_sample_blocks_to_np_audio(time_blocks)
     write_np_as_wav(song, sample_frequency, song_path)
-    """
