@@ -10,7 +10,7 @@ from pipes import quote
 
 # Original code copied from here https://github.com/unnati-xyz/music-generation/blob/master/MusicGen.ipynb
 
-tf.logging.set_verbosity(tf.logging.ERROR)
+# tf.logging.set_verbosity(tf.logging.ERROR)
 
 debug = True
 
