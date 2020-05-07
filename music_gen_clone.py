@@ -172,8 +172,9 @@ def getSequences(path):
 #         for i in range(max_seq_len):
 #             x_data[n][i] = chunks_X[n][i]
 #             y_data[n][i] = chunks_Y[n][i]
-
-    return (chunks_X, chunks_Y)
+    if debug:
+        print("len chunks x: ", len(chunks_X))
+    return chunks_X, chunks_Y
 
 
 # strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
