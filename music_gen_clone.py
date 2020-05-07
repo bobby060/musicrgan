@@ -194,24 +194,27 @@ if i==1:
     y_test = []
 
     print('starting walk')
-    for files in os.listdir(trainpath):
+    for file in os.listdir(trainpath):
         print('walking')
-        for file in files:
             # Decodes audio
-            if files.endswith(".wav"):
-                print('w')
-                print(file)
-                x, y =getSequences(file)
-                x_train.append(x)
-                y_train.append(y)
+        if file.endswith(".wav"):
+            print('found wav')
+            print(file)
+            x, y =getSequences(file)
+            x_train.append(x)
+            y_train.append(y)
 
-    for subdir, dirs, files in os.walk(testpath):
-        for file in files:
-            if files.endswith(".wav"):
-                print(file)
+    for file in os.listdir(testpath):
+        print('walking test')
+        # Decodes audio
+        if file.endswith(".wav"):
+            print('found wav')
+            print(file)
                 x,y = getSequences(file)
                 x_train.append(x)
                 y_train.append(y)
+
+
     print(len(x_train), ' songs read')
 
     total_len_train = 0
