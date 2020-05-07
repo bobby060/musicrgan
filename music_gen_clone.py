@@ -95,11 +95,6 @@ def fft_blocks_to_time_blocks(blocks_ft_domain):
 
 
 # Actual script begins here
-sample_frequency = 44100
-block_size = 44100
-trainpath = '/yoyoma_dataset/train'
-testpath = '/yoyoma_dataset/test'
-
 
 
 
@@ -157,7 +152,6 @@ def getSequences(path):
     cur_seq = 0
     chunks_X = []
     chunks_Y = []
-    max_seq_len = 10
     total_seq = len(X)
     while cur_seq + max_seq_len < total_seq:
         chunks_X.append(X[cur_seq:cur_seq + max_seq_len])
@@ -184,6 +178,20 @@ def getSequences(path):
 strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
 num_gpus = strategy.num_replicas_in_sync
 with strategy.scope():
+    sample_frequency = 44100
+    block_size = 44100
+    trainpath = '/yoyoma_dataset/train'
+    testpath = '/yoyoma_dataset/test'
+
+    max_seq_len = 10
+
+
+    x_train = np.zeros(1, max_seq_len, block_size*2)
+    y_train = np.zeros(1, max_seq_len, block_size*2)
+    x_test = np.zeros(1, max_seq_len, block_size*2)
+    y_test = np.zeros(1, max_seq_len, block_size*2)
+
+
     train_flag = True
     for subdir, dirs, files in os.walk(trainpath):
         for file in files:
