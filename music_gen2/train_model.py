@@ -2,11 +2,13 @@ import os
 import scipy.io.wavfile as wav
 import numpy as np
 import matplotlib.pyplot as plt
+
+import pickle
+import sys
 import tensorflow as tf
 from keras.models import Sequential, load_model
 from keras.layers import TimeDistributed, Dense, LSTM
 from helpers import getSequences,fft_blocks_to_time_blocks, saveAudio, convert_sample_blocks_to_np_audio
-import pickle
 
 # Original code copied from here https://github.com/unnati-xyz/music-generation/blob/master/MusicGen.ipynb
 
