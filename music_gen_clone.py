@@ -12,6 +12,8 @@ from keras.layers import TimeDistributed, Dense, LSTM
 # tf.logging.set_verbosity(tf.logging.ERROR)
 
 debug = True
+# define block size
+bs = 44100
 
 def read_wav_as_np(file):
     # wav.read returns the sampling rate per second  (as an int) and the data (as a numpy array)
@@ -29,6 +31,7 @@ def write_np_as_wav(X, sample_rate, file):
     # wav.write constructs the .wav file using the specified sample_rate and tensor
     wav.write(file, sample_rate, Xnew)
     return
+
 
 def convert_sample_blocks_to_np_audio(blocks):
     # Flattens the blocks into a single list
@@ -62,6 +65,7 @@ def convert_np_audio_to_sample_blocks(song_np, block_size):
         num_samples_so_far += block_size
     return block_lists
 
+
 def time_blocks_to_fft_blocks(blocks_time_domain):
     # FFT blocks initialized
     fft_blocks = []
@@ -73,6 +77,7 @@ def time_blocks_to_fft_blocks(blocks_time_domain):
         new_block = np.concatenate((np.real(fft_block), np.imag(fft_block)))
         fft_blocks.append(new_block)
     return fft_blocks
+
 
 def fft_blocks_to_time_blocks(blocks_ft_domain):
     # Time blocks initialized
@@ -125,18 +130,19 @@ def getSequences(path):
 
 # wav_array is converted into blocks with zeroes padded to fill the empty space in last block if any
 # Zero padding makes computations easier and better for neural network
-    wav_blocks_zero_padded = convert_np_audio_to_sample_blocks(wav_array, block_size)
+    wav_blocks_zero_padded = convert_np_audio_to_sample_blocks(wav_array, bs)
     print("len blocks 0 padded: ", len(wav_blocks_zero_padded))
 
 # Flattens the blocks into an array
-    if debug:
-        wav_array_zero_padded = convert_sample_blocks_to_np_audio(wav_blocks_zero_padded)
-
-        plt.plot(wav_array_zero_padded)
-        plt.title("Zero Padded WAV File")
-        plt.xlabel("Time (x 10^(-5)s)")
-        plt.ylabel("Amplitude")
-        plt.show()
+# Flattens the blocks into an array
+#     if debug:
+#         wav_array_zero_padded = convert_sample_blocks_to_np_audio(wav_blocks_zero_padded)
+#
+#         plt.plot(wav_array_zero_padded)
+#         plt.title("Zero Padded WAV File")
+#         plt.xlabel("Time (x 10^(-5)s)")
+#         plt.ylabel("Amplitude")
+#         plt.show()
 
 
 # Shifts one left to create labels for training
@@ -185,7 +191,6 @@ def getSequences(path):
 i = 1
 if i==1:
     sample_frequency = 44100
-    block_size = 44100
     trainpath = 'yoyoma_dataset/train/'
     testpath = 'yoyoma_dataset/test/'
 
