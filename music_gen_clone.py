@@ -2,9 +2,9 @@ import os
 import scipy.io.wavfile as wav
 import numpy as np
 import matplotlib.pyplot as plt
+import tensorflow as tf
 from keras.models import Sequential
-from keras.layers.core import TimeDistributedDense
-from keras.layers.recurrent import LSTM
+from keras.layers import TimeDistributed, Dense, LSTM
 from IPython.display import Audio
 from pipes import quote
 
@@ -125,161 +125,160 @@ os.system(cmd)
 """
 def getSequences(path):
 
-	wav_array, bitrate = read_wav_as_np(path)
+    wav_array, bitrate = read_wav_as_np(path)
 
 
 # wav_array is converted into blocks with zeroes padded to fill the empty space in last block if any
 # Zero padding makes computations easier and better for neural network
-	wav_blocks_zero_padded = convert_np_audio_to_sample_blocks(wav_array, block_size)
+    wav_blocks_zero_padded = convert_np_audio_to_sample_blocks(wav_array, block_size)
 
 # Flattens the blocks into an array
-	if debug:
-		wav_array_zero_padded = convert_sample_blocks_to_np_audio(wav_blocks_zero_padded)
+    if debug:
+        wav_array_zero_padded = convert_sample_blocks_to_np_audio(wav_blocks_zero_padded)
 
-		plt.plot(wav_array_zero_padded)
-		plt.title("Zero Padded WAV File")
-		plt.xlabel("Time (x 10^(-5)s)")
-		plt.ylabel("Amplitude")
-		plt.show()
+        plt.plot(wav_array_zero_padded)
+        plt.title("Zero Padded WAV File")
+        plt.xlabel("Time (x 10^(-5)s)")
+        plt.ylabel("Amplitude")
+        plt.show()
 
 
 # Shifts one left to create labels for training
-	labels_wav_blocks_zero_padded = wav_blocks_zero_padded[1:]
+    labels_wav_blocks_zero_padded = wav_blocks_zero_padded[1:]
 
+    # Fast fourier transforming the wav blocks into frequency domain
+    print('Dimension of wav blocks before fft: ',np.shape(wav_blocks_zero_padded))
 
-		# Fast fourier transforming the wav blocks into frequency domain
-	print('Dimension of wav blocks before fft: ',np.shape(wav_blocks_zero_padded))
+    X = time_blocks_to_fft_blocks(wav_blocks_zero_padded)
+    Y = time_blocks_to_fft_blocks(labels_wav_blocks_zero_padded)
 
-	X = time_blocks_to_fft_blocks(wav_blocks_zero_padded)
-	Y = time_blocks_to_fft_blocks(labels_wav_blocks_zero_padded)
+    print('Dimension of the training dataset (wav blocks after fft): ',np.shape(X))
 
-	print('Dimension of the training dataset (wav blocks after fft): ',np.shape(X))
-
-	cur_seq = 0
-	chunks_X = []
-	chunks_Y = []
-	max_seq_len = 10
-	total_seq = len(X)
-	while cur_seq + max_seq_len < total_seq:
-	    chunks_X.append(X[cur_seq:cur_seq + max_seq_len])
-	    chunks_Y.append(Y[cur_seq:cur_seq + max_seq_len])
-	    cur_seq += max_seq_len
-	# Number of examples
-	num_examples = len(chunks_X) 
-	# Imaginary part requires the extra space
-	num_dims_out = block_size * 2
+    cur_seq = 0
+    chunks_X = []
+    chunks_Y = []
+    max_seq_len = 10
+    total_seq = len(X)
+    while cur_seq + max_seq_len < total_seq:
+        chunks_X.append(X[cur_seq:cur_seq + max_seq_len])
+        chunks_Y.append(Y[cur_seq:cur_seq + max_seq_len])
+        cur_seq += max_seq_len
+    # Number of examples
+    num_examples = len(chunks_X)
+    # Imaginary part requires the extra space
+    num_dims_out = block_size * 2
 # Dimensions of the training dataset
-	out_shape = (num_examples, max_seq_len, num_dims_out)
-	x_data = np.zeros(out_shape)
-	y_data = np.zeros(out_shape)
+    out_shape = (num_examples, max_seq_len, num_dims_out)
+    x_data = np.zeros(out_shape)
+    y_data = np.zeros(out_shape)
 
-	# Populating the training dataset
-	for n in range(num_examples):
-	    for i in range(max_seq_len):
-	        x_data[n][i] = chunks_X[n][i]
-	        y_data[n][i] = chunks_Y[n][i]
+    # Populating the training dataset
+    for n in range(num_examples):
+        for i in range(max_seq_len):
+            x_data[n][i] = chunks_X[n][i]
+            y_data[n][i] = chunks_Y[n][i]
 
-	return (x_data, y_data)
+    return (x_data, y_data)
 
 
 strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
 num_gpus = strategy.num_replicas_in_sync
 with strategy.scope():
 
-	x_train = []
-	y_train = []
-	y_test=[]
-	x_test=[]
+    x_train = []
+    y_train = []
+    y_test=[]
+    x_test=[]
 
-	train_flag = True
-	for subdir, dirs, files in os.walk(train_path):
-	    for file in files:
-	    	x,y =getSequences(file)
-	    	if train_flag:
-	    		x_train = x
-	    		y_train = y
-	    		train_flag = False
-	    	else:
-		    	x_train = np.concat((x_train, x))
-		    	y_train = np.concat((y_train, y))
+    train_flag = True
+    for subdir, dirs, files in os.walk(trainpath):
+        for file in files:
+            x, y =getSequences(file)
+            if train_flag:
+                x_train = x
+                y_train = y
+                train_flag = False
+            else:
+                x_train = np.concat((x_train, x))
+                y_train = np.concat((y_train, y))
 
-	test_flag = True
-	for subdir, dirs, files in os.walk(test_path):
-	    for file in files:
-	    	x,y =getSequences(file)
-	    	if test_flag:
-	    		x_test = x
-	    		y_test = y
-	    		test_flag= False
-	    	else:
-	    		x_test = np.concat((x_test, x))
-	    		x_test = np.concat((y_test, y))
+    test_flag = True
+    for subdir, dirs, files in os.walk(testpath):
+        for file in files:
+            x,y = getSequences(file)
+            if test_flag:
+                x_test = x
+                y_test = y
+                test_flag= False
+            else:
+                x_test = np.concat((x_test, x))
+                x_test = np.concat((y_test, y))
 
-	print(len(x_train), ' train samples loaded')
-	print(len(x_test), 'test samples loaded')
+    print(len(x_train), ' train samples loaded')
+    print(len(x_test), 'test samples loaded')
 
-	num_frequency_dimensions = (np.shape(x_train))[1]
-	num_hidden_dimensions = 1024
-	print('Input layer size: ',num_frequency_dimensions)
-	print('Hidden layer size: ',num_hidden_dimensions)
-	# Sequential is a linear stack of layers
-	model = Sequential()
-	# This layer converts frequency space to hidden space
-	model.add(TimeDistributedDense(input_dim=num_frequency_dimensions, output_dim=num_hidden_dimensions))
-	# return_sequences=True implies return the entire output sequence & not just the last output
-	model.add(LSTM(input_dim=num_hidden_dimensions, output_dim=num_hidden_dimensions, return_sequences=True))
-	# This layer converts hidden space back to frequency space
-	model.add(TimeDistributedDense(input_dim=num_hidden_dimensions, output_dim=num_frequency_dimensions))
-	# Done building the model.Now, configure it for the learning process
-	model.compile(loss='mean_squared_error', optimizer='rmsprop', metrics=['mean_squared_error'])
+    num_frequency_dimensions = (np.shape(x_train))[1]
+    num_hidden_dimensions = 1024
+    print('Input layer size: ',num_frequency_dimensions)
+    print('Hidden layer size: ',num_hidden_dimensions)
+    # Sequential is a linear stack of layers
+    model = Sequential()
+    # This layer converts frequency space to hidden space
+    model.add(TimeDistributed(Dense(num_hidden_dimensions, input_dim=num_frequency_dimensions)))
+    # return_sequences=True implies return the entire output sequence & not just the last output
+    model.add(LSTM(num_hidden_dimensions, return_sequences=True))
+    # This layer converts hidden space back to frequency space
+    model.add(TimeDistributed(Dense(num_frequency_dimensions)))
+    # Done building the model.Now, configure it for the learning process
+    model.compile(loss='mean_squared_error', optimizer='rmsprop', metrics=['mean_squared_error'])
 
-	model.summary()
-
-
-	# Number of iterations for training
-	num_iters = 5
-	# Number of iterations before we save our model
-	epochs_per_iter = 3
-	# Number of training examples pushed to the GPU per batch.
-	batch_size = 20
-	# Path to weights file
-	model_path = 'models/music_gen'
-	cur_iter = 0
-	while cur_iter < num_iters:
-	    print('Iteration: ' + str(cur_iter))
-	    # Iterate over the training data in batches
-	    history = model.fit(x_data, y_data, batch_size=batch_size, epochs=epochs_per_iter, validation_data=(x_test, y_test))
-	    cur_iter += epochs_per_iter
-	print('Training complete!')
-	model.save(model_path)
+    model.summary()
 
 
-	# We take the first chunk of the training data itself for seed sequence.
-	seed_seq = x_train[0]
-	# Reshaping the sequence to feed to the RNN.
-	seed_seq = np.reshape(seed_seq, (1, seed_seq.shape[0], seed_seq.shape[1]))
-	# Generated song sequence is stored in output.
-	output = []
-	for it in range(max_seq_len):
-	    # Generates new value
-	    seedSeqNew = model.predict(seed_seq) 
-	    # Appends it to the output
-	    if it == 0:
-	        for i in range(seedSeqNew.shape[1]):
-	            output.append(seedSeqNew[0][i].copy())
-	    else:
-	        output.append(seedSeqNew[0][seedSeqNew.shape[1]-1].copy()) 
-	    # newSeq contains the generated sequence.
-	    newSeq = seedSeqNew[0][seedSeqNew.shape[1]-1]
-	    # Reshaping the new sequence for concatenation.
-	    newSeq = np.reshape(newSeq, (1, 1, newSeq.shape[0]))
-	    # Appending the new sequence to the old sequence.
-	    seed_seq = np.concatenate((seed_seq, newSeq), axis=1)
+    # Number of iterations for training
+    num_iters = 5
+    # Number of iterations before we save our model
+    epochs_per_iter = 3
+    # Number of training examples pushed to the GPU per batch.
+    batch_size = 20
+    # Path to weights file
+    model_path = 'models/music_gen'
+    cur_iter = 0
+    while cur_iter < num_iters:
+        print('Iteration: ' + str(cur_iter))
+        # Iterate over the training data in batches
+        history = model.fit(x_data, y_data, batch_size=batch_size, epochs=epochs_per_iter, validation_data=(x_test, y_test))
+        cur_iter += epochs_per_iter
+    print('Training complete!')
+    model.save(model_path)
 
 
-	# The path for the generated song
-	song_path = '/results/gen_song.wav'
-	# Reversing the conversions
-	time_blocks = fft_blocks_to_time_blocks(output)
-	song = convert_sample_blocks_to_np_audio(time_blocks)
-	write_np_as_wav(song, sample_frequency, song_path)
+    # We take the first chunk of the training data itself for seed sequence.
+    seed_seq = x_train[0]
+    # Reshaping the sequence to feed to the RNN.
+    seed_seq = np.reshape(seed_seq, (1, seed_seq.shape[0], seed_seq.shape[1]))
+    # Generated song sequence is stored in output.
+    output = []
+    for it in range(max_seq_len):
+        # Generates new value
+        seedSeqNew = model.predict(seed_seq)
+        # Appends it to the output
+        if it == 0:
+            for i in range(seedSeqNew.shape[1]):
+                output.append(seedSeqNew[0][i].copy())
+        else:
+            output.append(seedSeqNew[0][seedSeqNew.shape[1]-1].copy())
+        # newSeq contains the generated sequence.
+        newSeq = seedSeqNew[0][seedSeqNew.shape[1]-1]
+        # Reshaping the new sequence for concatenation.
+        newSeq = np.reshape(newSeq, (1, 1, newSeq.shape[0]))
+        # Appending the new sequence to the old sequence.
+        seed_seq = np.concatenate((seed_seq, newSeq), axis=1)
+
+
+    # The path for the generated song
+    song_path = '/results/gen_song.wav'
+    # Reversing the conversions
+    time_blocks = fft_blocks_to_time_blocks(output)
+    song = convert_sample_blocks_to_np_audio(time_blocks)
+    write_np_as_wav(song, sample_frequency, song_path)
