@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from keras.models import Sequential
 from keras.layers import TimeDistributed, Dense, LSTM
-from pipes import quote
 
 
 # Original code copied from here https://github.com/unnati-xyz/music-generation/blob/master/MusicGen.ipynb
@@ -16,7 +15,7 @@ debug = True
 
 def read_wav_as_np(file):
     # wav.read returns the sampling rate per second  (as an int) and the data (as a numpy array)
-    data = wav.read(file)
+    rate, data = wav.read(file)
     # Normalize 16-bit input to [-1, 1] range
     np_arr = data[1].astype('float32') / 32767.0
     #np_arr = np.array(np_arr)
@@ -255,7 +254,7 @@ with strategy.scope():
     # return_sequences=True implies return the entire output sequence & not just the last output
     model.add(LSTM(num_hidden_dimensions, return_sequences=True))
     # This layer converts hidden space back to frequency space
-    model.add(TimeDistributed(Dense(num_frequency_dimensions)))
+    model.add(TimeDistributed(Dense(block_size*2)))
     # Done building the model.Now, configure it for the learning process
     model.compile(loss='mean_squared_error', optimizer='rmsprop', metrics=['mean_squared_error'])
 
