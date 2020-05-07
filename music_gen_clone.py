@@ -207,6 +207,7 @@ if i==1:
             x,y = getSequences(file)
             x_train.append(x)
             y_train.append(y)
+    print(len(x_train), ' songs read')
 
     total_len_train = 0
     total_len_test = 0
