@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from keras.models import Sequential
 from keras.layers import TimeDistributed, Dense, LSTM
-from IPython.display import Audio
 from pipes import quote
 
 
@@ -163,18 +162,18 @@ def getSequences(path):
     num_examples = len(chunks_X)
     # Imaginary part requires the extra space
     num_dims_out = block_size * 2
-# Dimensions of the training dataset
-    out_shape = (num_examples, max_seq_len, num_dims_out)
-    x_data = np.zeros(out_shape)
-    y_data = np.zeros(out_shape)
+# # Dimensions of the training dataset
+#     out_shape = (num_examples, max_seq_len, num_dims_out)
+#     x_data = np.zeros(out_shape)
+#     y_data = np.zeros(out_shape)
+#
+#     # Populating the training dataset
+#     for n in range(num_examples):
+#         for i in range(max_seq_len):
+#             x_data[n][i] = chunks_X[n][i]
+#             y_data[n][i] = chunks_Y[n][i]
 
-    # Populating the training dataset
-    for n in range(num_examples):
-        for i in range(max_seq_len):
-            x_data[n][i] = chunks_X[n][i]
-            y_data[n][i] = chunks_Y[n][i]
-
-    return (x_data, y_data)
+    return (chunks_X, chunks_Y)
 
 
 strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
@@ -188,38 +187,58 @@ with strategy.scope():
     max_seq_len = 10
 
 
-    x_train = np.zeros((100, max_seq_len, block_size*2))
-    y_train = np.zeros((100, max_seq_len, block_size*2))
-    x_test = np.zeros((100, max_seq_len, block_size*2))
-    y_test = np.zeros((100, max_seq_len, block_size*2))
+    x_train = []
+    y_train = []
+    x_test = []
+    y_test = []
 
 
     train_flag = True
     for subdir, dirs, files in os.walk(trainpath):
         for file in files:
-            print(file)
             x, y =getSequences(file)
-            print(len(x))
-            if train_flag:
-                x_train = x
-                y_train = y
-
-                train_flag = False
-            else:
-                x_train = np.concat((x_train, x))
-                y_train = np.concat((y_train, y))
+            x_train.append(x)
+            y_train.append(y)
 
     test_flag = True
     for subdir, dirs, files in os.walk(testpath):
         for file in files:
             x,y = getSequences(file)
-            if test_flag:
-                x_test = x
-                y_test = y
-                test_flag= False
-            else:
-                x_test = np.concat((x_test, x))
-                x_test = np.concat((y_test, y))
+            x_train.append(x)
+            y_train.append(y)
+
+    total_len_train = 0
+    total_len_test = 0
+    for x in x_train:
+        total_len_train+=len(x)
+    for x in x_test:
+        total_len_test+=len(x)
+
+
+    out_shape_train = (total_len_train, max_seq_len, block_size*2)
+    out_shape_test = (total_len_test, max_seq_len,block_size*2)
+    x_train_arr = np.zeros(out_shape_train)
+    y_train_arr = np.zeros(out_shape_train)
+
+    x_test_arr = np.zeros(out_shape_test)
+    y_test_arr = np.zeros(out_shape_test)
+
+    offset = 0
+    for x in range(len(x_train)):
+        for n in range (len(x_train[x])):
+            for i in range(max_seq_len):
+                x_train_arr[n+offset][i] = x_train[x][n][i]
+                y_train_arr[n + offset][i] = y_train[x][n][i]
+        offset+=len(x_train[x])
+
+    offset = 0
+    for x in range(len(x_test)):
+        for n in range(len(x_test[x])):
+            for i in range(max_seq_len):
+                x_test_arr[n + offset][i] = x_test[x][n][i]
+                y_test_arr[n + offset][i] = y_test[x][n][i]
+        offset += len(x_test[x])
+
 
     print(len(x_train), ' train samples loaded')
     print(len(x_test), 'test samples loaded')
