@@ -204,6 +204,7 @@ if i==1:
             print(file)
             path = trainpath+file
             x, y =getSequences(path)
+            print(len(x))
             x_train.append(x)
             y_train.append(y)
 
