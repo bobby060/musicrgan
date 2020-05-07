@@ -240,11 +240,11 @@ with strategy.scope():
         offset += len(x_test[x])
 
 
-    print(len(x_train), ' train samples loaded')
-    print(len(x_test), 'test samples loaded')
+    print(len(x_train_arr), ' train samples loaded')
+    print(len(x_test_arr), 'test samples loaded')
 
-    print(x_train.shape)
-    num_frequency_dimensions = x_train.shape[1]
+    print(x_train_arr.shape)
+    num_frequency_dimensions = x_train_arr.shape[1]
     num_hidden_dimensions = 1024
     print('Input layer size: ',num_frequency_dimensions)
     print('Hidden layer size: ',num_hidden_dimensions)
@@ -274,14 +274,14 @@ with strategy.scope():
     while cur_iter < num_iters:
         print('Iteration: ' + str(cur_iter))
         # Iterate over the training data in batches
-        history = model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs_per_iter, validation_data=(x_test, y_test))
+        history = model.fit(x_train_arr, y_train_arr, batch_size=batch_size, epochs=epochs_per_iter, validation_data=(x_test_arr, y_test_arr))
         cur_iter += epochs_per_iter
     print('Training complete!')
     model.save(model_path)
 
 
     # We take the first chunk of the training data itself for seed sequence.
-    seed_seq = x_train[0]
+    seed_seq = x_train_arr[0]
     # Reshaping the sequence to feed to the RNN.
     seed_seq = np.reshape(seed_seq, (1, seed_seq.shape[0], seed_seq.shape[1]))
     # Generated song sequence is stored in output.
