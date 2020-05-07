@@ -19,7 +19,9 @@ def read_wav_as_np(file):
     # wav.read returns the sampling rate per second  (as an int) and the data (as a numpy array)
     rate, data = wav.read(file)
     # Normalize 16-bit input to [-1, 1] range
+    print(data.shape)
     np_arr = data[1].astype('float32') / 32767.0
+    print(np_arr.shape)
     #np_arr = np.array(np_arr)
     return np_arr, data[0]
 
