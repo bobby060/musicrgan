@@ -3,27 +3,40 @@ import scipy.io.wavfile as wav
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.layers import TimeDistributed, Dense, LSTM
-from .helpers import
-
+from .helpers import getSequences,fft_blocks_to_time_blocks, saveAudio, convert_sample_blocks_to_np_audio
+import pickle
 
 # Original code copied from here https://github.com/unnati-xyz/music-generation/blob/master/MusicGen.ipynb
 
 # tf.logging.set_verbosity(tf.logging.ERROR)
-
 debug = True
 # define block size
 
+"""
+Usage:
 
+train_model.py <mode> <modelpath> <epochs> <songpath>
 
+Three modes:
+"new" creates new model at path
+"continue" loads old model, trains
+"generate" only generates a song
 
-# Actual script begins here
-
-
-
-
-
+"""
+argv = sys.argv
+mode = 0
+epochs = 0
+model_path = argv[2]
+song_path = argv[4]
+if argv[1]=="generate":
+    mode = 2
+elif argv[1]=="continue":
+    mode = 1
+    epochs = int(argv[3])
+else:
+    epochs = int(argv[3])
 
 strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
 num_gpus = strategy.num_replicas_in_sync
@@ -42,12 +55,12 @@ with strategy.scope():
     y_test = []
 
     for file in os.listdir(trainpath):
-            # Decodes audio
+        # Decodes audio
         if file.endswith(".wav"):
-            print(file)
             path = trainpath+file
-            x, y =getSequences(path, bs, max_seq_len)
-            print(" Number sequences generated: ",len(x))
+            x, y = getSequences(path, bs, max_seq_len)
+            if debug:
+                print(" Number sequences generated: ",len(x))
             x_train.append(x)
             y_train.append(y)
 
@@ -56,10 +69,10 @@ with strategy.scope():
             print('walking test')
         # Decodes audio
         if file.endswith(".wav"):
-            print(file)
             path = testpath + file
             x,y = getSequences(path, bs, max_seq_len)
-            print(" Number sequences generated: ",len(x))
+            if debug:
+                print(" Number sequences generated: ",len(x))
             x_test.append(x)
             y_test.append(y)
 
@@ -78,7 +91,6 @@ with strategy.scope():
         print(len(x_train[0]))
         print(' num train seqs created: ', total_len_train)
         print(' num test seqs createdL: ', total_len_test)
-
 
     out_shape_train = (total_len_train, max_seq_len, bs*2)
     out_shape_test = (total_len_test, max_seq_len,bs*2)
@@ -104,7 +116,6 @@ with strategy.scope():
                 y_test_arr[n + offset][i] = y_test[x][n][i]
         offset += len(x_test[x])
 
-
     if debug:
         print(len(x_train_arr), ' train samples loaded')
         print(len(x_test_arr), 'test samples loaded')
@@ -116,39 +127,43 @@ with strategy.scope():
     print('Hidden layer size: ',num_hidden_dimensions)
     # Sequential is a linear stack of layers
 
-    model = Sequential()
-    # This layer converts frequency space to hidden space
-    model.add(TimeDistributed(Dense(num_hidden_dimensions), input_shape=(num_frequency_dimensions, bs*2)))
-    # return_sequences=True implies return the entire output sequence & not just the last output
-    model.add(LSTM(num_hidden_dimensions, return_sequences=True))
-    # This layer converts hidden space back to frequency space
-    model.add(TimeDistributed(Dense(bs*2)))
-    # Done building the model.Now, configure it for the learning process
-    model.compile(loss='mean_squared_error', optimizer='rmsprop', metrics=['mean_squared_error'])
+    if mode == 0:
+        model = Sequential()
+        # This layer converts frequency space to hidden space
+        model.add(TimeDistributed(Dense(num_hidden_dimensions), input_shape=(num_frequency_dimensions, bs*2)))
+        # return_sequences=True implies return the entire output sequence & not just the last output
+        model.add(LSTM(num_hidden_dimensions, return_sequences=True))
+        # This layer converts hidden space back to frequency space
+        model.add(TimeDistributed(Dense(bs*2)))
+        # Done building the model.Now, configure it for the learning process
+        model.compile(loss='mean_squared_error', optimizer='rmsprop', metrics=['mean_squared_error'])
 
-    model.summary()
+        model.summary()
 
+    else:
+        model = load_model(model_path)
 
+    if mode !=2:
     # Number of iterations for training
-    num_iters = 5
-    # Number of iterations before we save our model
-    epochs_per_iter = 3
-    # Number of training examples pushed to the GPU per batch.
-    batch_size = 5
-    # Path to weights file
-    model_path = 'models/music_gen1.0.h5'
-    cur_iter = 0
-    while cur_iter < num_iters:
-        print('Iteration: ' + str(cur_iter))
-        # Iterate over the training data in batches
-        history = model.fit(x_train_arr, y_train_arr, batch_size=batch_size, epochs=epochs_per_iter, validation_data=(x_test_arr, y_test_arr))
-        cur_iter += epochs_per_iter
-    print('Training complete!')
-    model.save(model_path)
-
+        num_iters = epochs
+        # Number of iterations before we save our model
+        epochs_per_iter = 10
+        # Number of training examples pushed to the GPU per batch.
+        batch_size = 5
+        # Path to weights file
+        cur_iter = 0
+        while cur_iter < num_iters:
+            print('Iteration: ' + str(cur_iter))
+            # Iterate over the training data in batches
+            history = model.fit(x_train_arr, y_train_arr, batch_size=batch_size, epochs=epochs_per_iter, validation_data=(x_test_arr, y_test_arr))
+            model.save(model_path)
+            with open('regressionhistory', 'wb') as file_pi:
+                pickle.dump(history.history, file_pi)
+            cur_iter += epochs_per_iter
+        print('Training complete!')
 
     # We take the first chunk of the training data itself for seed sequence.
-    seed_seq = x_train_arr[2]
+    seed_seq = x_test_arr[2]
     # Reshaping the sequence to feed to the RNN.
     seed_seq = np.reshape(seed_seq, (1, seed_seq.shape[0], seed_seq.shape[1]))
 
@@ -167,7 +182,8 @@ with strategy.scope():
         next_step = seedSeqNew[0][-1]
         next_step = np.reshape(next_step, (1, next_step.shape[0]))
         newSeq = np.concatenate((seed_seq[0][-9:], next_step), axis=0)
-        print('next step shape: ', newSeq.shape)
+        if debug:
+            print('next step shape: ', newSeq.shape)
         # Reshaping the new sequence for concatenation.
         newSeq = np.reshape(newSeq, (1, newSeq.shape[0], newSeq.shape[1]))
         # Appending the new sequence to the old sequence.
@@ -175,7 +191,6 @@ with strategy.scope():
 
 
     # The path for the generated song
-    song_path = 'results/gen_song2.wav'
     # Reversing the conversions
     time_blocks = fft_blocks_to_time_blocks(output)
     song = convert_sample_blocks_to_np_audio(time_blocks)
