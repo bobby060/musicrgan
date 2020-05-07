@@ -182,8 +182,8 @@ i = 1
 if i==1:
     sample_frequency = 44100
     block_size = 44100
-    trainpath = '/yoyoma_dataset/train'
-    testpath = '/yoyoma_dataset/test'
+    trainpath = '/yoyoma_dataset/train/'
+    testpath = '/yoyoma_dataset/test/'
 
     max_seq_len = 10
 
@@ -198,7 +198,7 @@ if i==1:
         print('walking')
         for file in files:
             # Decodes audio
-            if files.endswith(".mp3"):
+            if files.endswith(".wav"):
                 print('w')
                 print(file)
                 x, y =getSequences(file)
@@ -207,7 +207,7 @@ if i==1:
 
     for subdir, dirs, files in os.walk(testpath):
         for file in files:
-            if files.endswith(".mp3"):
+            if files.endswith(".wav"):
                 print(file)
                 x,y = getSequences(file)
                 x_train.append(x)
