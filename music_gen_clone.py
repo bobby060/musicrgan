@@ -193,18 +193,18 @@ if i==1:
     x_test = []
     y_test = []
 
-
-    train_flag = True
+    print('starting walk')
     for subdir, dirs, files in os.walk(trainpath):
+        print('walking')
         for file in files:
             # Decodes audio
             if files.endswith(".mp3"):
+                print'w'
                 print(file)
                 x, y =getSequences(file)
                 x_train.append(x)
                 y_train.append(y)
 
-    test_flag = True
     for subdir, dirs, files in os.walk(testpath):
         for file in files:
             if files.endswith(".mp3"):
