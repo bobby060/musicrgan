@@ -185,10 +185,10 @@ strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
 num_gpus = strategy.num_replicas_in_sync
 with strategy.scope():
 
-    x_train = []
-    y_train = []
-    y_test=[]
-    x_test=[]
+    x_train = np.zeros(1)
+    y_train = np.zeros(1)
+    y_test=np.zeros(1)
+    x_test=np.zeros(1)
 
     train_flag = True
     for subdir, dirs, files in os.walk(trainpath):
