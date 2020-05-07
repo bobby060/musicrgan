@@ -11,6 +11,8 @@ from pipes import quote
 
 # Original code copied from here https://github.com/unnati-xyz/music-generation/blob/master/MusicGen.ipynb
 
+tf.logging.set_verbosity(tf.logging.ERROR)
+
 debug = True
 
 def read_wav_as_np(file):
@@ -186,10 +188,10 @@ with strategy.scope():
     max_seq_len = 10
 
 
-    x_train = np.zeros((1000, max_seq_len, block_size*2))
-    y_train = np.zeros((1000, max_seq_len, block_size*2))
-    x_test = np.zeros((1000, max_seq_len, block_size*2))
-    y_test = np.zeros((1000, max_seq_len, block_size*2))
+    x_train = np.zeros((100, max_seq_len, block_size*2))
+    y_train = np.zeros((100, max_seq_len, block_size*2))
+    x_test = np.zeros((100, max_seq_len, block_size*2))
+    y_test = np.zeros((100, max_seq_len, block_size*2))
 
 
     train_flag = True
@@ -253,7 +255,7 @@ with strategy.scope():
     while cur_iter < num_iters:
         print('Iteration: ' + str(cur_iter))
         # Iterate over the training data in batches
-        history = model.fit(x_data, y_data, batch_size=batch_size, epochs=epochs_per_iter, validation_data=(x_test, y_test))
+        history = model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs_per_iter, validation_data=(x_test, y_test))
         cur_iter += epochs_per_iter
     print('Training complete!')
     model.save(model_path)
