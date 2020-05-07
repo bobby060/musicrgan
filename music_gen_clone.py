@@ -229,7 +229,7 @@ if i==1:
         total_len_test+=len(x)
 
     if debug:
-        print(x_train[0].shape)
+        print(len(x_train[0]))
         print(' num train seqs created: ', total_len_train)
         print(' num test seqs createdL: ', total_len_test)
 
