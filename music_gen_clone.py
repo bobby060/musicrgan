@@ -184,12 +184,6 @@ def getSequences(path):
 strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
 num_gpus = strategy.num_replicas_in_sync
 with strategy.scope():
-
-    x_train = np.zeros(1)
-    y_train = np.zeros(1)
-    y_test=np.zeros(1)
-    x_test=np.zeros(1)
-
     train_flag = True
     for subdir, dirs, files in os.walk(trainpath):
         for file in files:
@@ -197,6 +191,7 @@ with strategy.scope():
             if train_flag:
                 x_train = x
                 y_train = y
+
                 train_flag = False
             else:
                 x_train = np.concat((x_train, x))
