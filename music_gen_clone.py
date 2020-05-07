@@ -308,8 +308,10 @@ if i==1:
 
     # We take the first chunk of the training data itself for seed sequence.
     seed_seq = x_train_arr[2]
+    print(seed_seq.shape)
     # Reshaping the sequence to feed to the RNN.
     seed_seq = np.reshape(seed_seq, (1, seed_seq.shape[0], seed_seq.shape[1]))
+    print(seed_seq.shape)
     # Generated song sequence is stored in output.
     output = []
     for it in range(max_seq_len):
