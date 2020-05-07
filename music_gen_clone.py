@@ -197,17 +197,21 @@ if i==1:
     train_flag = True
     for subdir, dirs, files in os.walk(trainpath):
         for file in files:
-            print(file)
-            x, y =getSequences(file)
-            x_train.append(x)
-            y_train.append(y)
+            # Decodes audio
+            if files.endswith(".mp3"):
+                print(file)
+                x, y =getSequences(file)
+                x_train.append(x)
+                y_train.append(y)
 
     test_flag = True
     for subdir, dirs, files in os.walk(testpath):
         for file in files:
-            x,y = getSequences(file)
-            x_train.append(x)
-            y_train.append(y)
+            if files.endswith(".mp3"):
+                print(file)
+                x,y = getSequences(file)
+                x_train.append(x)
+                y_train.append(y)
     print(len(x_train), ' songs read')
 
     total_len_train = 0
