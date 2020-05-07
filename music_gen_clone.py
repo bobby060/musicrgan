@@ -19,9 +19,7 @@ def read_wav_as_np(file):
     # wav.read returns the sampling rate per second  (as an int) and the data (as a numpy array)
     rate, data = wav.read(file)
     # Normalize 16-bit input to [-1, 1] range
-    print(data.shape)
     np_arr = data.astype('float32') / 32767.0
-    print(np_arr.shape)
     #np_arr = np.array(np_arr)
     return np_arr, data[0]
 
@@ -182,8 +180,6 @@ def getSequences(path):
 #         for i in range(max_seq_len):
 #             x_data[n][i] = chunks_X[n][i]
 #             y_data[n][i] = chunks_Y[n][i]
-    if debug:
-        print("len chunks x: ", len(chunks_X))
     return chunks_X, chunks_Y
 
 
@@ -204,17 +200,13 @@ if i==1:
     x_test = []
     y_test = []
 
-    if debug:
-        print('starting walk')
     for file in os.listdir(trainpath):
-        if debug:
-            print('walking')
             # Decodes audio
         if file.endswith(".wav"):
             print(file)
             path = trainpath+file
             x, y =getSequences(path)
-            print(len(x))
+            print(" Number sequences generated: ",len(x))
             x_train.append(x)
             y_train.append(y)
 
@@ -226,11 +218,13 @@ if i==1:
             print(file)
             path = testpath + file
             x,y = getSequences(path)
+            print(" Number sequences generated: ",len(x))
             x_test.append(x)
             y_test.append(y)
 
-
-    print(len(x_train), ' songs read')
+    if debug:
+        print(len(x_train), ' train songs read')
+        print(len(x_test), ' test songs read')
 
     total_len_train = 0
     total_len_test = 0
