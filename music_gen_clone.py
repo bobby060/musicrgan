@@ -147,6 +147,7 @@ def getSequences(path):
 
     X = time_blocks_to_fft_blocks(wav_blocks_zero_padded)
     Y = time_blocks_to_fft_blocks(labels_wav_blocks_zero_padded)
+    print('num fft blocks: ',len(X))
     if debug:
         print('Dimension of the training dataset (wav blocks after fft): ',np.shape(X))
 
