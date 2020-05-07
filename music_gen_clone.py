@@ -142,12 +142,13 @@ def getSequences(path):
     labels_wav_blocks_zero_padded = wav_blocks_zero_padded[1:]
 
     # Fast fourier transforming the wav blocks into frequency domain
-    print('Dimension of wav blocks before fft: ',np.shape(wav_blocks_zero_padded))
+    if debug:
+        print('Dimension of wav blocks before fft: ',np.shape(wav_blocks_zero_padded))
 
     X = time_blocks_to_fft_blocks(wav_blocks_zero_padded)
     Y = time_blocks_to_fft_blocks(labels_wav_blocks_zero_padded)
-
-    print('Dimension of the training dataset (wav blocks after fft): ',np.shape(X))
+    if debug:
+        print('Dimension of the training dataset (wav blocks after fft): ',np.shape(X))
 
     cur_seq = 0
     chunks_X = []
@@ -193,12 +194,13 @@ if i==1:
     x_test = []
     y_test = []
 
-    print('starting walk')
+    if debug:
+        print('starting walk')
     for file in os.listdir(trainpath):
-        print('walking')
+        if debug:
+            print('walking')
             # Decodes audio
         if file.endswith(".wav"):
-            print('found wav')
             print(file)
             path = trainpath+file
             x, y =getSequences(path)
@@ -206,15 +208,15 @@ if i==1:
             y_train.append(y)
 
     for file in os.listdir(testpath):
-        print('walking test')
+        if debug:
+            print('walking test')
         # Decodes audio
         if file.endswith(".wav"):
-            print('found wav')
             print(file)
             path = testpath + file
             x,y = getSequences(path)
-            x_train.append(x)
-            y_train.append(y)
+            x_test.append(x)
+            y_test.append(y)
 
 
     print(len(x_train), ' songs read')
@@ -225,6 +227,10 @@ if i==1:
         total_len_train+=len(x)
     for x in x_test:
         total_len_test+=len(x)
+
+    if debug:
+        print(' num train seqs created: ', total_len_train)
+        print(' num test seqs createdL: ', total_len_test)
 
 
     out_shape_train = (total_len_train, max_seq_len, block_size*2)
@@ -252,8 +258,9 @@ if i==1:
         offset += len(x_test[x])
 
 
-    print(len(x_train_arr), ' train samples loaded')
-    print(len(x_test_arr), 'test samples loaded')
+    if debug:
+        print(len(x_train_arr), ' train samples loaded')
+        print(len(x_test_arr), 'test samples loaded')
 
     print(x_train_arr.shape)
     num_frequency_dimensions = x_train_arr.shape[1]
