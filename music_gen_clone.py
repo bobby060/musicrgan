@@ -169,7 +169,7 @@ def getSequences(path):
     # Number of examples
     num_examples = len(chunks_X)
     # Imaginary part requires the extra space
-    num_dims_out = block_size * 2
+    num_dims_out = bs * 2
 # # Dimensions of the training dataset
 #     out_shape = (num_examples, max_seq_len, num_dims_out)
 #     x_data = np.zeros(out_shape)
@@ -243,8 +243,8 @@ if i==1:
         print(' num test seqs createdL: ', total_len_test)
 
 
-    out_shape_train = (total_len_train, max_seq_len, block_size*2)
-    out_shape_test = (total_len_test, max_seq_len,block_size*2)
+    out_shape_train = (total_len_train, max_seq_len, bs*2)
+    out_shape_test = (total_len_test, max_seq_len,bs*2)
     x_train_arr = np.zeros(out_shape_train)
     y_train_arr = np.zeros(out_shape_train)
 
@@ -281,11 +281,11 @@ if i==1:
     """
     model = Sequential()
     # This layer converts frequency space to hidden space
-    model.add(TimeDistributed(Dense(num_hidden_dimensions), input_shape=(num_frequency_dimensions, block_size*2)))
+    model.add(TimeDistributed(Dense(num_hidden_dimensions), input_shape=(num_frequency_dimensions, bs*2)))
     # return_sequences=True implies return the entire output sequence & not just the last output
     model.add(LSTM(num_hidden_dimensions, return_sequences=True))
     # This layer converts hidden space back to frequency space
-    model.add(TimeDistributed(Dense(block_size*2)))
+    model.add(TimeDistributed(Dense(bs*2)))
     # Done building the model.Now, configure it for the learning process
     model.compile(loss='mean_squared_error', optimizer='rmsprop', metrics=['mean_squared_error'])
 
