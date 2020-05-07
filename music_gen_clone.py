@@ -217,7 +217,7 @@ with strategy.scope():
     print(len(x_train), ' train samples loaded')
     print(len(x_test), 'test samples loaded')
 
-    num_frequency_dimensions = (np.shape(x_train))[1]
+    num_frequency_dimensions = x_train.shape[1]
     num_hidden_dimensions = 1024
     print('Input layer size: ',num_frequency_dimensions)
     print('Hidden layer size: ',num_hidden_dimensions)
