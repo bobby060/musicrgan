@@ -197,6 +197,7 @@ if i==1:
     train_flag = True
     for subdir, dirs, files in os.walk(trainpath):
         for file in files:
+            print(file)
             x, y =getSequences(file)
             x_train.append(x)
             y_train.append(y)
