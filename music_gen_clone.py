@@ -85,9 +85,9 @@ def fft_blocks_to_time_blocks(blocks_ft_domain):
     for block in blocks_ft_domain:
         num_elems = block.shape[0] / 2
         # Extracts real part of the amplitude corresponding to the frequency
-        real_chunk = block[0:num_elems]
+        real_chunk = block[0:int(num_elems)]
         # Extracts imaginary part of the amplitude corresponding to the frequency
-        imag_chunk = block[num_elems:]
+        imag_chunk = block[int(num_elems):]
         # Represents amplitude as a complex number corresponding to the frequency
         new_block = real_chunk + 1.0j * imag_chunk
         # Computes the one-dimensional discrete inverse Fourier Transform and returns the transformed
