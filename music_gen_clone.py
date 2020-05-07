@@ -334,7 +334,7 @@ if i==1:
 
 
     # The path for the generated song
-    song_path = '/results/gen_song.wav'
+    song_path = 'results/gen_song.wav'
     # Reversing the conversions
     time_blocks = fft_blocks_to_time_blocks(output)
     song = convert_sample_blocks_to_np_audio(time_blocks)
