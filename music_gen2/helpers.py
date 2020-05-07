@@ -2,7 +2,7 @@ import os
 import scipy.io.wavfile as wav
 import numpy as np
 import tensorflow as tf
-
+debug = True
 
 def read_wav_as_np(file):
     # wav.read returns the sampling rate per second  (as an int) and the data (as a numpy array)
