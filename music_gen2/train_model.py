@@ -44,8 +44,8 @@ strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
 num_gpus = strategy.num_replicas_in_sync
 with strategy.scope():
     sample_frequency = 44100
-    trainpath = '../yoyoma_dataset/train/'
-    testpath = '../yoyoma_dataset/test/'
+    trainpath = '../../musicrganold/yoyoma_dataset/train/'
+    testpath = '../../musicrganold/yoyoma_dataset/test/'
 
     max_seq_len = 10
     bs = 44100
