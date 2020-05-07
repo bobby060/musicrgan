@@ -199,7 +199,7 @@ if i==1:
         for file in files:
             # Decodes audio
             if files.endswith(".mp3"):
-                print'w'
+                print('w')
                 print(file)
                 x, y =getSequences(file)
                 x_train.append(x)
