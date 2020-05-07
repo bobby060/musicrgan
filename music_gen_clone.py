@@ -126,6 +126,7 @@ def getSequences(path):
 # wav_array is converted into blocks with zeroes padded to fill the empty space in last block if any
 # Zero padding makes computations easier and better for neural network
     wav_blocks_zero_padded = convert_np_audio_to_sample_blocks(wav_array, block_size)
+    print("len blocks 0 padded: ", len(wav_blocks_zero_padded))
 
 # Flattens the blocks into an array
     if debug:
