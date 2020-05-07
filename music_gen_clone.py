@@ -24,6 +24,13 @@ def read_wav_as_np(file):
     return np_arr, data[0]
 
 
+def saveAudio(arr, sample_rate, path):
+    saved = tf.audio.encode_wav(tf.cast(arr, float) ,sample_rate)
+    tf.io.write_file(path, saved, name=None)
+    return
+
+
+
 def write_np_as_wav(X, sample_rate, file):
     # Converting the tensor back to it's original form
     Xnew = X * 32767.0
@@ -338,4 +345,4 @@ if i==1:
     # Reversing the conversions
     time_blocks = fft_blocks_to_time_blocks(output)
     song = convert_sample_blocks_to_np_audio(time_blocks)
-    write_np_as_wav(song, sample_frequency, song_path)
+    saveAudio(song, sample_frequency, song_path)
