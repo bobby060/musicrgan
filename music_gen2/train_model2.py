@@ -184,6 +184,7 @@ with strategy.scope():
         # newSeq contains the generated sequence.
         next_step = predicted
         seed_seq = np.concatenate((seed_seq[0][-9:], predicted), axis=0)
+        seed_seq = np.reshape(seed_seq, 1, seed_seq.shape[0], seed_seq.shape[1])
         if debug:
             print("step done")
 
