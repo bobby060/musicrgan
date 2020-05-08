@@ -175,23 +175,17 @@ with strategy.scope():
     output = []
     for it in range(max_seq_len):
         # Generates new value
-        seedSeqNew = model.predict(seed_seq)
+        predicted= model.predict(seed_seq)
         # Appends it to the output
         if it == 0:
-            for i in range(seedSeqNew.shape[1]):
-                output.append(seedSeqNew[0][i].copy())
-        else:
-            output.append(seedSeqNew[0][seedSeqNew.shape[1]-1].copy())
+            for i in range(seed_seq.shape[1]):
+                output.append(seed_seq[0][i].copy())
+        output.append(predicted)
         # newSeq contains the generated sequence.
-        next_step = seedSeqNew[0][-1]
-        next_step = np.reshape(next_step, (1, next_step.shape[0]))
-        newSeq = np.concatenate((seed_seq[0][-9:], next_step), axis=0)
+        next_step = predicted
+        seed_seq = np.concatenate((seed_seq[0][-9:], predicted), axis=0)
         if debug:
-            print('next step shape: ', newSeq.shape)
-        # Reshaping the new sequence for concatenation.
-        newSeq = np.reshape(newSeq, (1, newSeq.shape[0], newSeq.shape[1]))
-        # Appending the new sequence to the old sequence.
-        seed_seq = newSeq
+            print("step done")
 
 
     # The path for the generated song
