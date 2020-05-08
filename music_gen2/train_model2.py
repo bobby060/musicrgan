@@ -177,9 +177,6 @@ with strategy.scope():
         # Generates new value
         predicted= model.predict(seed_seq)
         # Appends it to the output
-        if it == 0:
-            for i in range(seed_seq.shape[1]):
-                output.append(seed_seq[0][i].copy())
         output.append(predicted)
         # newSeq contains the generated sequence.
         next_step = predicted
