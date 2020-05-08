@@ -95,9 +95,9 @@ with strategy.scope():
         print(' num test seqs createdL: ', total_len_test)
 
     out_shape_train = (total_len_train, max_seq_len, bs*2)
-    label_shape_train = (total_len_train, 1, bs*2)
+    label_shape_train = (total_len_train, bs*2)
     out_shape_test = (total_len_test, max_seq_len,bs*2)
-    label_shape_test = (total_len_test, 1, bs*2)
+    label_shape_test = (total_len_test, bs*2)
     x_train_arr = np.zeros(out_shape_train)
     y_train_arr = np.zeros(label_shape_train)
 
@@ -126,7 +126,7 @@ with strategy.scope():
 
     print(x_train_arr.shape)
     num_frequency_dimensions = x_train_arr.shape[1]
-    num_hidden_dimensions = 3000
+    num_hidden_dimensions = 1024
     print('Input layer size: ',num_frequency_dimensions)
     print('Hidden layer size: ',num_hidden_dimensions)
     # Sequential is a linear stack of layers
