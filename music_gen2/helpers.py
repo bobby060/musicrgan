@@ -177,7 +177,7 @@ def getSequences2(path, bs, max_seq_len):
     while cur_seq + max_seq_len < total_seq:
         chunks_X.append(X[cur_seq:cur_seq + max_seq_len])
         # Only change to v2, creates a single target instead of a sequence.
-        chunks_Y.append(Y[cur_seq + max_seq_len])
+        chunks_Y.append(Y[cur_seq + max_seq_len-1])
         cur_seq += max_seq_len
     # Number of examples
     num_examples = len(chunks_X)
