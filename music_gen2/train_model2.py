@@ -176,9 +176,8 @@ with strategy.scope():
     for it in range(max_seq_len):
         # Generates new value
         predicted= model.predict(seed_seq)
-        predicted = np.reshape(predicted,(1, predicted.shape[0]))
         # Appends it to the output
-        output.append(predicted)
+        output.append(predicted[0])
         # newSeq contains the generated sequence.
         next_step = predicted
         seed_seq = np.concatenate((seed_seq[0][-9:], predicted), axis=0)
