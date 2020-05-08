@@ -4,6 +4,9 @@ import sys
 """
 Usage:
 python convert_audio.py <train dir in> <test dir in> <train dir out> <test dir out> <bitrate>
+
+Works for files without special characters
+Make sure to use relative paths to data
 """
 
 """

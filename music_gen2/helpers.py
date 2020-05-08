@@ -140,3 +140,49 @@ def getSequences(path, bs, max_seq_len):
 
     # Originally returned np arrays, returns list because I np later
     return chunks_X, chunks_Y
+
+
+# Modified from unnati-xyz to allow for generating from multiple songs
+def getSequences2(path, bs, max_seq_len):
+
+    wav_array, bitrate = read_wav_as_np(path)
+
+
+# wav_array is converted into blocks with zeroes padded to fill the empty space in last block if any
+# Zero padding makes computations easier and better for neural network
+    wav_blocks_zero_padded = convert_np_audio_to_sample_blocks(wav_array, bs)
+    print("len blocks 0 padded: ", len(wav_blocks_zero_padded))
+
+# Flattens the blocks into an array
+# Flattens the blocks into an array
+
+
+# Shifts one left to create labels for training
+    labels_wav_blocks_zero_padded = wav_blocks_zero_padded[1:]
+
+    # Fast fourier transforming the wav blocks into frequency domain
+    if debug:
+        print('Dimension of wav blocks before fft: ',np.shape(wav_blocks_zero_padded))
+
+    X = time_blocks_to_fft_blocks(wav_blocks_zero_padded)
+    Y = time_blocks_to_fft_blocks(labels_wav_blocks_zero_padded)
+    print('num fft blocks: ',len(X))
+    if debug:
+        print('Dimension of the training dataset (wav blocks after fft): ',np.shape(X))
+
+    cur_seq = 0
+    chunks_X = []
+    chunks_Y = []
+    total_seq = len(X)
+    while cur_seq + max_seq_len < total_seq:
+        chunks_X.append(X[cur_seq:cur_seq + max_seq_len])
+        # Only change to v2, creates a single target instead of a sequence.
+        chunks_Y.append(Y[cur_seq + max_seq_len])
+        cur_seq += max_seq_len
+    # Number of examples
+    num_examples = len(chunks_X)
+    # Imaginary part requires the extra space
+    num_dims_out = bs * 2
+
+    # Originally returned np arrays, returns list because I np later
+    return chunks_X, chunks_Y
