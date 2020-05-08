@@ -1,4 +1,5 @@
 import os
+import sys
 
 """
 Usage:
@@ -27,7 +28,7 @@ def convert(input, output):
                 os.system(command_string)
 
 
-argv = os.argv
+argv = sys.argv
 input_dir_test = argv[1]
 input_dir_train = argv[2]
 output_dir_test = argv[3]
