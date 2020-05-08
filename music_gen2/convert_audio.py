@@ -22,6 +22,7 @@ def convert(input, output):
             # print os.path.join(subdir, file)
             if file.endswith(".mp3"):
                 filepath = subdir + os.sep + file
+                print(filepath)
                 new_file = file.replace(".mp3", ".wav")
                 output_path = output + os.sep + new_file
                 command_string = "ffmpeg -i " + filepath + " -acodec pcm_s16le -ac 1 -ar " + str(bitrate) + " " + output_path
