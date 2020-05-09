@@ -46,8 +46,8 @@ with strategy.scope():
     sample_frequency = 16000
     # trainpath = '../../musicrganold/yoyoma_dataset/train/'
     # testpath = '../../musicrganold/yoyoma_dataset/test/'
-    trainpath = '../../../train/'
-    testpath = '../../../test/'
+    trainpath = '../../train/'
+    testpath = '../../test/'
     max_seq_len = 10
     # bs = 44100
     bs = 16000
