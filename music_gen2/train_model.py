@@ -43,12 +43,14 @@ else:
 strategy = tf.distribute.OneDeviceStrategy (device="/GPU:3")
 num_gpus = strategy.num_replicas_in_sync
 with strategy.scope():
-    sample_frequency = 44100
-    trainpath = '../../musicrganold/yoyoma_dataset/train/'
-    testpath = '../../musicrganold/yoyoma_dataset/test/'
-
+    sample_frequency = 16000
+    # trainpath = '../../musicrganold/yoyoma_dataset/train/'
+    # testpath = '../../musicrganold/yoyoma_dataset/test/'
+    trainpath = '../../../train/'
+    testpath = '../../../test/'
     max_seq_len = 10
-    bs = 44100
+    # bs = 44100
+    bs = 16000
 
     # Will contain list of song blocks.
     x_train = []
