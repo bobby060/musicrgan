@@ -106,7 +106,7 @@ with strategy.scope():
     if mode == 0:
         model = Sequential()
         # This layer converts frequency space to hidden space
-        model.add(TimeDistributed(Dense(num_hidden_dimensions), input_shape=(num_frequency_dimensions, bs*2)))
+        model.add(TimeDistributed(Dense(num_hidden_dimensions), input_shape=(10, bs*2)))
         # return_sequences=True implies return the entire output sequence & not just the last output
         model.add(LSTM(num_hidden_dimensions, return_sequences=True))
         # This layer converts hidden space back to frequency space
