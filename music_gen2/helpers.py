@@ -2,7 +2,7 @@ import os
 import scipy.io.wavfile as wav
 import numpy as np
 import tensorflow as tf
-debug = True
+debug = False
 
 def read_wav_as_np(file):
     # wav.read returns the sampling rate per second  (as an int) and the data (as a numpy array)
@@ -44,7 +44,8 @@ def convert_np_audio_to_sample_blocks(song_np, block_size):
 
     # total_samples holds the size of the numpy array
     total_samples = song_np.shape[0]
-    print('total_samples=',total_samples)
+    if debug:
+        print('total_samples=',total_samples)
 
     # num_samples_so_far is used to loop through the numpy array
     num_samples_so_far = 0
@@ -106,7 +107,8 @@ def getSequences(path, bs, max_seq_len):
 # wav_array is converted into blocks with zeroes padded to fill the empty space in last block if any
 # Zero padding makes computations easier and better for neural network
     wav_blocks_zero_padded = convert_np_audio_to_sample_blocks(wav_array, bs)
-    print("len blocks 0 padded: ", len(wav_blocks_zero_padded))
+    if debug:
+        print("len blocks 0 padded: ", len(wav_blocks_zero_padded))
 
 # Flattens the blocks into an array
 # Flattens the blocks into an array
@@ -151,7 +153,8 @@ def getSequences2(path, bs, max_seq_len):
 # wav_array is converted into blocks with zeroes padded to fill the empty space in last block if any
 # Zero padding makes computations easier and better for neural network
     wav_blocks_zero_padded = convert_np_audio_to_sample_blocks(wav_array, bs)
-    print("len blocks 0 padded: ", len(wav_blocks_zero_padded))
+    if debug:
+        print("len blocks 0 padded: ", len(wav_blocks_zero_padded))
 
 # Flattens the blocks into an array
 # Flattens the blocks into an array
