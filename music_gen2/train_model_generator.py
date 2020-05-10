@@ -58,44 +58,46 @@ with strategy.scope():
     y_test = []
 
     def train_generator(batch = 20):
-        for file in os.listdir(trainpath):
-            # Decodes audio
-            if file.endswith(".wav"):
-                path = trainpath+file
-                x, y = getSequences(path, bs, max_seq_len)
-                if debug:
-                    print(" Number sequences generated: ",len(x))
-                out_shape_train = (len(x), max_seq_len, bs * 2)
-                x_train_arr = np.zeros(out_shape_train)
-                y_train_arr = np.zeros(out_shape_train)
+        while True:
+            for file in os.listdir(trainpath):
+                # Decodes audio
+                if file.endswith(".wav"):
+                    path = trainpath+file
+                    x, y = getSequences(path, bs, max_seq_len)
+                    if debug:
+                        print(" Number sequences generated: ",len(x))
+                    out_shape_train = (len(x), max_seq_len, bs * 2)
+                    x_train_arr = np.zeros(out_shape_train)
+                    y_train_arr = np.zeros(out_shape_train)
 
-                for n in range(len(x)):
-                    for i in range(max_seq_len):
-                        x_train_arr[n][i] = x[n][i]
-                        y_train_arr[n][i] = y[n][i]
+                    for n in range(len(x)):
+                        for i in range(max_seq_len):
+                            x_train_arr[n][i] = x[n][i]
+                            y_train_arr[n][i] = y[n][i]
 
-                yield x_train_arr, y_train_arr
+                    yield x_train_arr, y_train_arr
 
     def test_generator(batch = 20):
-        for file in os.listdir(testpath):
-            if debug:
-                print('walking test')
-            # Decodes audio
-            if file.endswith(".wav"):
-                path = testpath + file
-                x,y = getSequences(path, bs, max_seq_len)
+        while True:
+            for file in os.listdir(testpath):
                 if debug:
-                    print(" Number sequences generated: ",len(x))
-                out_shape_test = (len(x), max_seq_len, bs * 2)
-                x_test_arr = np.zeros(out_shape_test)
-                y_test_arr = np.zeros(out_shape_test)
+                    print('walking test')
+                # Decodes audio
+                if file.endswith(".wav"):
+                    path = testpath + file
+                    x,y = getSequences(path, bs, max_seq_len)
+                    if debug:
+                        print(" Number sequences generated: ",len(x))
+                    out_shape_test = (len(x), max_seq_len, bs * 2)
+                    x_test_arr = np.zeros(out_shape_test)
+                    y_test_arr = np.zeros(out_shape_test)
 
-                for n in range(len(x)):
-                    for i in range(max_seq_len):
-                        x_test_arr[n][i] = x[n][i]
-                        y_test_arr[n][i] = y[n][i]
+                    for n in range(len(x)):
+                        for i in range(max_seq_len):
+                            x_test_arr[n][i] = x[n][i]
+                            y_test_arr[n][i] = y[n][i]
 
-                yield x_test_arr, y_test_arr
+                    yield x_test_arr, y_test_arr
 
     num_frequency_dimensions = 32000
     num_hidden_dimensions = 1024
