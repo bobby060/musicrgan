@@ -74,7 +74,7 @@ with strategy.scope():
                         x_train_arr[n][i] = x[n][i]
                         y_train_arr[n][i] = y[n][i]
 
-                return x[:batch], y[:batch]
+                return x_train_arr, y_train_arr
 
     def test_generator(batch = 20):
         for file in os.listdir(testpath):
@@ -95,7 +95,7 @@ with strategy.scope():
                         x_test_arr[n][i] = x[n][i]
                         y_test_arr[n][i] = y[n][i]
 
-                return x[:batch], y[:batch]
+                return x_test_arr, y_test_arr
 
     num_frequency_dimensions = 32000
     num_hidden_dimensions = 1024
