@@ -140,7 +140,7 @@ with strategy.scope():
             # Iterate over the training data in batches
             history = model.fit_generator(train_gen,  steps_per_epoch= 500, epochs=epochs_per_iter, validation_data=test_gen, validation_steps=50)
             model.save(model_path)
-            with open('regressionhistory4', 'wb') as file_pi:
+            with open('regressionhistory5', 'wb') as file_pi:
                 pickle.dump(history.history, file_pi)
             cur_iter += epochs_per_iter
         print('Training complete!')
