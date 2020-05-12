@@ -146,7 +146,7 @@ with strategy.scope():
         print('Training complete!')
 
     # We take the first chunk of the training data itself for seed sequence.
-    seed_seq = next(train_gen)[0]
+    seed_seq = next(train_gen)[0][0]
     # Reshaping the sequence to feed to the RNN.
     seed_seq = np.reshape(seed_seq, (1, seed_seq.shape[0], seed_seq.shape[1]))
 
