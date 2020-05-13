@@ -25,6 +25,8 @@ from sklearn.preprocessing import normalize, MinMaxScaler
 import sys
 
 """
+
+Use to create songs from an existing model using the step by step framework
 Usage: python make_music <model_path> <input_window> <bitrate> <num songs> <savepath> 
 
 """
